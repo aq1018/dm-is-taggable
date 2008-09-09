@@ -1,0 +1,12 @@
+History.txt
+LICENSE
+Manifest.txt
+README.txt
+Rakefile
+TODO
+lib/dm-is-taggable.rb
+lib/dm-is-taggable/is/taggable.rb
+lib/dm-is-taggable/is/version.rb
+spec/integration/taggable_spec.rb
+spec/spec.opts
+spec/spec_helper.rb
