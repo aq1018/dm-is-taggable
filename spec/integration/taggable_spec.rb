@@ -3,21 +3,19 @@ require Pathname(__FILE__).dirname.expand_path.parent + 'spec_helper'
 
 require "dm-types"
 require "dm-aggregates"
+
 require Pathname(__FILE__).dirname.expand_path.parent / 'data' / 'tag'
 require Pathname(__FILE__).dirname.expand_path.parent / 'data' / 'tagging'
 require Pathname(__FILE__).dirname.expand_path.parent / 'data' / 'bot'
 require Pathname(__FILE__).dirname.expand_path.parent / 'data' / 'user'
-
 require Pathname(__FILE__).dirname.expand_path.parent / 'data' / 'picture'
 require Pathname(__FILE__).dirname.expand_path.parent / 'data' / 'article'
 
-
+DataMapper.auto_migrate!
 
 if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
   describe 'DataMapper::Is::Taggable' do
     before(:all) do
-      DataMapper.auto_migrate!
-      
       @user1 = User.create(:name => "user1")
       @user2 = User.create(:name => "user2")
       

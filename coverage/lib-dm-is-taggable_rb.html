@@ -553,7 +553,7 @@ span.run100 {
 </style>
     </head>
   <body><h3>C0 code coverage information</h3>
-    <p>Generated on Tue Sep 09 15:21:46 +0800 2008 with <a href='http://eigenclass.org/hiki/rcov'>rcov 0.8.1.2</a>
+    <p>Generated on Wed Sep 10 12:06:53 +0800 2008 with <a href='http://eigenclass.org/hiki/rcov'>rcov 0.8.1.2</a>
       </p>
     <hr/>
     <pre><span class='marked0'>Code reported as executed by Ruby looks like this...
@@ -571,9 +571,9 @@ span.run100 {
     </thead>
   <tbody><tr class='light'><td><a href='lib-dm-is-taggable_rb.html'>lib/dm-is-taggable.rb</a>
         </td>
-      <td class='lines_total'><tt>25</tt>
+      <td class='lines_total'><tt>28</tt>
         </td>
-      <td class='lines_code'><tt>17</tt>
+      <td class='lines_code'><tt>21</tt>
         </td>
       <td><table cellspacing='0' cellpadding='0' align='right'><tr><td><tt class='coverage_total'>100.0%</tt>
               &nbsp;</td>
@@ -612,17 +612,20 @@ span.run100 {
 </span><span class="inferred0"><a name="line12"></a>12 
 </span><span class="inferred1"><a name="line13"></a>13 # Require plugin-files
 </span><span class="marked0"><a name="line14"></a>14 require Pathname(__FILE__).dirname.expand_path / 'dm-is-taggable' / 'tag_list.rb'
-</span><span class="marked1"><a name="line15"></a>15 require Pathname(__FILE__).dirname.expand_path / 'dm-is-taggable' / 'is' / 'taggable.rb'
-</span><span class="inferred0"><a name="line16"></a>16 
-</span><span class="inferred1"><a name="line17"></a>17 
-</span><span class="inferred0"><a name="line18"></a>18 # Include the plugin in Resource
-</span><span class="marked1"><a name="line19"></a>19 module DataMapper
-</span><span class="marked0"><a name="line20"></a>20   module Resource
-</span><span class="marked1"><a name="line21"></a>21     module ClassMethods
-</span><span class="marked0"><a name="line22"></a>22       include DataMapper::Is::Taggable
-</span><span class="inferred1"><a name="line23"></a>23     end # module ClassMethods
-</span><span class="inferred0"><a name="line24"></a>24   end # module Resource
-</span><span class="inferred1"><a name="line25"></a>25 end # module DataMapper
+</span><span class="marked1"><a name="line15"></a>15 require Pathname(__FILE__).dirname.expand_path / 'dm-is-taggable' / 'is' / 'shared.rb'
+</span><span class="marked0"><a name="line16"></a>16 require Pathname(__FILE__).dirname.expand_path / 'dm-is-taggable' / 'is' / 'taggable.rb'
+</span><span class="marked1"><a name="line17"></a>17 require Pathname(__FILE__).dirname.expand_path / 'dm-is-taggable' / 'is' / 'tag.rb'
+</span><span class="marked0"><a name="line18"></a>18 require Pathname(__FILE__).dirname.expand_path / 'dm-is-taggable' / 'is' / 'tagging.rb'
+</span><span class="marked1"><a name="line19"></a>19 require Pathname(__FILE__).dirname.expand_path / 'dm-is-taggable' / 'is' / 'tagger.rb'
+</span><span class="inferred0"><a name="line20"></a>20 
+</span><span class="inferred1"><a name="line21"></a>21 # Include the plugin in Resource
+</span><span class="marked0"><a name="line22"></a>22 module DataMapper
+</span><span class="marked1"><a name="line23"></a>23   module Resource
+</span><span class="marked0"><a name="line24"></a>24     module ClassMethods
+</span><span class="marked1"><a name="line25"></a>25       include DataMapper::Is::Taggable
+</span><span class="inferred0"><a name="line26"></a>26     end # module ClassMethods
+</span><span class="inferred1"><a name="line27"></a>27   end # module Resource
+</span><span class="inferred0"><a name="line28"></a>28 end # module DataMapper
 </span></pre><hr/>
     <p>Generated using the <a href='http://eigenclass.org/hiki.rb?rcov'>rcov code coverage analysis tool for Ruby</a>
    version 0.8.1.2.</p>

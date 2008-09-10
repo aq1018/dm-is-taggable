@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'><head><title>lib/dm-is-taggable/tag_list.rb - C0 code coverage information</title>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'><head><title>lib/dm-is-taggable/is/tagging.rb - C0 code coverage information</title>
     <style type='text/css'>body { background-color: rgb(240, 240, 245); }</style>
     <style type='text/css'>span.cross-ref-title {
  font-size: 140%;
@@ -569,26 +569,26 @@ span.run100 {
       <td class='heading'>Code coverage</td>
       </tr>
     </thead>
-  <tbody><tr class='light'><td><a href='lib-dm-is-taggable-tag_list_rb.html'>lib/dm-is-taggable/tag_list.rb</a>
+  <tbody><tr class='light'><td><a href='lib-dm-is-taggable-is-tagging_rb.html'>lib/dm-is-taggable/is/tagging.rb</a>
         </td>
-      <td class='lines_total'><tt>105</tt>
+      <td class='lines_total'><tt>20</tt>
         </td>
-      <td class='lines_code'><tt>64</tt>
+      <td class='lines_code'><tt>17</tt>
         </td>
-      <td><table cellspacing='0' cellpadding='0' align='right'><tr><td><tt class='coverage_total'>80.0%</tt>
+      <td><table cellspacing='0' cellpadding='0' align='right'><tr><td><tt class='coverage_total'>100.0%</tt>
               &nbsp;</td>
-            <td><table cellspacing='0' class='percent_graph' cellpadding='0' width='100'><tr><td class='covered' width='80'/>
-                  <td class='uncovered' width='20'/>
+            <td><table cellspacing='0' class='percent_graph' cellpadding='0' width='100'><tr><td class='covered' width='100'/>
+                  <td class='uncovered' width='0'/>
                   </tr>
                 </table>
               </td>
             </tr>
           </table>
         </td>
-      <td><table cellspacing='0' cellpadding='0' align='right'><tr><td><tt class='coverage_code'>71.9%</tt>
+      <td><table cellspacing='0' cellpadding='0' align='right'><tr><td><tt class='coverage_code'>100.0%</tt>
               &nbsp;</td>
-            <td><table cellspacing='0' class='percent_graph' cellpadding='0' width='100'><tr><td class='covered' width='72'/>
-                  <td class='uncovered' width='28'/>
+            <td><table cellspacing='0' class='percent_graph' cellpadding='0' width='100'><tr><td class='covered' width='100'/>
+                  <td class='uncovered' width='0'/>
                   </tr>
                 </table>
               </td>
@@ -598,111 +598,26 @@ span.run100 {
       </tr>
     </tbody>
   </table>
-<pre><span class="marked1"><a name="line1"></a>  1 class TagList &lt; Array
-</span><span class="marked0"><a name="line2"></a>  2   cattr_accessor :delimiter
-</span><span class="marked1"><a name="line3"></a>  3   self.delimiter = ','
-</span><span class="inferred0"><a name="line4"></a>  4   
-</span><span class="marked1"><a name="line5"></a>  5   def initialize(*args)
-</span><span class="marked0"><a name="line6"></a>  6     add(*args)
-</span><span class="marked1"><a name="line7"></a>  7   end
-</span><span class="inferred0"><a name="line8"></a>  8   
-</span><span class="inferred1"><a name="line9"></a>  9   # Add tags to the tag_list. Duplicate or blank tags will be ignored.
-</span><span class="inferred0"><a name="line10"></a> 10   #
-</span><span class="inferred1"><a name="line11"></a> 11   #   tag_list.add(&quot;Fun&quot;, &quot;Happy&quot;)
-</span><span class="inferred0"><a name="line12"></a> 12   # 
-</span><span class="inferred1"><a name="line13"></a> 13   # Use the &lt;tt&gt;:parse&lt;/tt&gt; option to add an unparsed tag string.
-</span><span class="inferred0"><a name="line14"></a> 14   #
-</span><span class="inferred1"><a name="line15"></a> 15   #   tag_list.add(&quot;Fun, Happy&quot;, :parse =&gt; true)
-</span><span class="marked0"><a name="line16"></a> 16   def add(*names)
-</span><span class="marked1"><a name="line17"></a> 17     extract_and_apply_options!(names)
-</span><span class="marked0"><a name="line18"></a> 18     concat(names)
-</span><span class="marked1"><a name="line19"></a> 19     clean!
-</span><span class="marked0"><a name="line20"></a> 20     self
-</span><span class="inferred1"><a name="line21"></a> 21   end
-</span><span class="inferred0"><a name="line22"></a> 22   
-</span><span class="inferred1"><a name="line23"></a> 23   # Remove specific tags from the tag_list.
-</span><span class="inferred0"><a name="line24"></a> 24   # 
-</span><span class="inferred1"><a name="line25"></a> 25   #   tag_list.remove(&quot;Sad&quot;, &quot;Lonely&quot;)
-</span><span class="inferred0"><a name="line26"></a> 26   #
-</span><span class="inferred1"><a name="line27"></a> 27   # Like #add, the &lt;tt&gt;:parse&lt;/tt&gt; option can be used to remove multiple tags in a string.
-</span><span class="inferred0"><a name="line28"></a> 28   # 
-</span><span class="inferred1"><a name="line29"></a> 29   #   tag_list.remove(&quot;Sad, Lonely&quot;, :parse =&gt; true)
-</span><span class="marked0"><a name="line30"></a> 30   def remove(*names)
-</span><span class="uncovered1"><a name="line31"></a> 31     extract_and_apply_options!(names)
-</span><span class="uncovered0"><a name="line32"></a> 32     delete_if { |name| names.include?(name) }
-</span><span class="uncovered1"><a name="line33"></a> 33     self
-</span><span class="uncovered0"><a name="line34"></a> 34   end
-</span><span class="inferred1"><a name="line35"></a> 35   
-</span><span class="inferred0"><a name="line36"></a> 36   # Toggle the presence of the given tags.
-</span><span class="inferred1"><a name="line37"></a> 37   # If a tag is already in the list it is removed, otherwise it is added.
-</span><span class="marked0"><a name="line38"></a> 38   def toggle(*names)
-</span><span class="uncovered1"><a name="line39"></a> 39     extract_and_apply_options!(names)
-</span><span class="uncovered0"><a name="line40"></a> 40     
-</span><span class="uncovered1"><a name="line41"></a> 41     names.each do |name|
-</span><span class="uncovered0"><a name="line42"></a> 42       include?(name) ? delete(name) : push(name)
-</span><span class="uncovered1"><a name="line43"></a> 43     end
-</span><span class="uncovered0"><a name="line44"></a> 44     
-</span><span class="uncovered1"><a name="line45"></a> 45     clean! 
-</span><span class="uncovered0"><a name="line46"></a> 46     self
-</span><span class="uncovered1"><a name="line47"></a> 47   end
-</span><span class="inferred0"><a name="line48"></a> 48   
-</span><span class="inferred1"><a name="line49"></a> 49   # Transform the tag_list into a tag string suitable for edting in a form.
-</span><span class="inferred0"><a name="line50"></a> 50   # The tags are joined with &lt;tt&gt;TagList.delimiter&lt;/tt&gt; and quoted if necessary.
-</span><span class="inferred1"><a name="line51"></a> 51   #
-</span><span class="inferred0"><a name="line52"></a> 52   #   tag_list = TagList.new(&quot;Round&quot;, &quot;Square,Cube&quot;)
-</span><span class="inferred1"><a name="line53"></a> 53   #   tag_list.to_s # 'Round, &quot;Square,Cube&quot;'
-</span><span class="marked0"><a name="line54"></a> 54   def to_s
-</span><span class="uncovered1"><a name="line55"></a> 55     clean!
-</span><span class="uncovered0"><a name="line56"></a> 56     
-</span><span class="uncovered1"><a name="line57"></a> 57     map do |name|
-</span><span class="uncovered0"><a name="line58"></a> 58       name.include?(delimiter) ? &quot;\&quot;#{name}\&quot;&quot; : name
-</span><span class="uncovered1"><a name="line59"></a> 59     end.join(delimiter.ends_with?(&quot; &quot;) ? delimiter : &quot;#{delimiter} &quot;)
-</span><span class="uncovered0"><a name="line60"></a> 60   end
-</span><span class="inferred1"><a name="line61"></a> 61   
-</span><span class="marked0"><a name="line62"></a> 62  private
-</span><span class="inferred1"><a name="line63"></a> 63   # Remove whitespace, duplicates, and blanks.
-</span><span class="marked0"><a name="line64"></a> 64   def clean!
-</span><span class="marked1"><a name="line65"></a> 65     reject!{|t| t.blank?}
-</span><span class="marked0"><a name="line66"></a> 66     map!{|t| t.strip}
-</span><span class="marked1"><a name="line67"></a> 67     uniq!
-</span><span class="inferred0"><a name="line68"></a> 68   end
-</span><span class="inferred1"><a name="line69"></a> 69   
-</span><span class="marked0"><a name="line70"></a> 70   def extract_and_apply_options!(args)
-</span><span class="marked1"><a name="line71"></a> 71     options = args.last.is_a?(Hash) ? args.pop : {}
-</span><span class="inferred0"><a name="line72"></a> 72   
-</span><span class="marked1"><a name="line73"></a> 73     if options[:parse]
-</span><span class="uncovered0"><a name="line74"></a> 74       args.map! { |a| self.class.from(a) }
-</span><span class="uncovered1"><a name="line75"></a> 75     end
-</span><span class="inferred0"><a name="line76"></a> 76     
-</span><span class="marked1"><a name="line77"></a> 77     args.flatten!
-</span><span class="inferred0"><a name="line78"></a> 78   end
-</span><span class="inferred1"><a name="line79"></a> 79   
-</span><span class="marked0"><a name="line80"></a> 80   class &lt;&lt; self
-</span><span class="inferred1"><a name="line81"></a> 81     # Returns a new TagList using the given tag string.
-</span><span class="inferred0"><a name="line82"></a> 82     # 
-</span><span class="inferred1"><a name="line83"></a> 83     #   tag_list = TagList.from(&quot;One , Two,  Three&quot;)
-</span><span class="inferred0"><a name="line84"></a> 84     #   tag_list # [&quot;One&quot;, &quot;Two&quot;, &quot;Three&quot;]
-</span><span class="marked1"><a name="line85"></a> 85     def from(source)
-</span><span class="marked0"><a name="line86"></a> 86       tag_list = TagList.new
-</span><span class="marked1"><a name="line87"></a> 87       case source
-</span><span class="marked0"><a name="line88"></a> 88         when Array
-</span><span class="marked1"><a name="line89"></a> 89           source.each{|a| tag_list.add(TagList.from(a))}
-</span><span class="inferred0"><a name="line90"></a> 90         else
-</span><span class="marked1"><a name="line91"></a> 91           string = source.to_s.dup
-</span><span class="inferred0"><a name="line92"></a> 92           # Parse the quoted tags
-</span><span class="inferred1"><a name="line93"></a> 93           [
-</span><span class="marked0"><a name="line94"></a> 94             /\s*#{delimiter}\s*(['&quot;])(.*?)\1\s*/,
-</span><span class="marked1"><a name="line95"></a> 95             /^\s*(['&quot;])(.*?)\1\s*#{delimiter}?/
-</span><span class="inferred0"><a name="line96"></a> 96           ].each do |re|
-</span><span class="marked1"><a name="line97"></a> 97             string.gsub!(re) { tag_list &lt;&lt; $2; &quot;&quot; }
-</span><span class="inferred0"><a name="line98"></a> 98           end
-</span><span class="marked1"><a name="line99"></a> 99           tag_list.add(string.split(delimiter))
-</span><span class="inferred0"><a name="line100"></a>100       end
-</span><span class="inferred1"><a name="line101"></a>101       
-</span><span class="marked0"><a name="line102"></a>102       tag_list
-</span><span class="inferred1"><a name="line103"></a>103     end
-</span><span class="inferred0"><a name="line104"></a>104   end
-</span><span class="inferred1"><a name="line105"></a>105 end
+<pre><span class="marked1"><a name="line1"></a> 1 module DataMapper
+</span><span class="marked0"><a name="line2"></a> 2   module Is
+</span><span class="marked1"><a name="line3"></a> 3     module Taggable
+</span><span class="inferred0"><a name="line4"></a> 4       
+</span><span class="marked1"><a name="line5"></a> 5       def is_tagging(options=nil)
+</span><span class="marked0"><a name="line6"></a> 6         extend  DataMapper::Is::Taggable::TaggingClassMethods
+</span><span class="marked1"><a name="line7"></a> 7         include DataMapper::Is::Taggable::TaggingInstanceMethods
+</span><span class="marked0"><a name="line8"></a> 8         is :remixable
+</span><span class="marked1"><a name="line9"></a> 9         property :id, DataMapper::Types::Serial
+</span><span class="marked0"><a name="line10"></a>10         property :tag_id, Integer
+</span><span class="inferred1"><a name="line11"></a>11       end
+</span><span class="inferred0"><a name="line12"></a>12       
+</span><span class="marked1"><a name="line13"></a>13       module TaggingClassMethods
+</span><span class="inferred0"><a name="line14"></a>14       end
+</span><span class="inferred1"><a name="line15"></a>15 
+</span><span class="marked0"><a name="line16"></a>16       module TaggingInstanceMethods
+</span><span class="inferred1"><a name="line17"></a>17       end
+</span><span class="inferred0"><a name="line18"></a>18     end
+</span><span class="inferred1"><a name="line19"></a>19   end
+</span><span class="inferred0"><a name="line20"></a>20 end
 </span></pre><hr/>
     <p>Generated using the <a href='http://eigenclass.org/hiki.rb?rcov'>rcov code coverage analysis tool for Ruby</a>
    version 0.8.1.2.</p>

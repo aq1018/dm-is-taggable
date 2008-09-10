@@ -12,8 +12,11 @@ require 'dm-aggregates'
 
 # Require plugin-files
 require Pathname(__FILE__).dirname.expand_path / 'dm-is-taggable' / 'tag_list.rb'
+require Pathname(__FILE__).dirname.expand_path / 'dm-is-taggable' / 'is' / 'shared.rb'
 require Pathname(__FILE__).dirname.expand_path / 'dm-is-taggable' / 'is' / 'taggable.rb'
-
+require Pathname(__FILE__).dirname.expand_path / 'dm-is-taggable' / 'is' / 'tag.rb'
+require Pathname(__FILE__).dirname.expand_path / 'dm-is-taggable' / 'is' / 'tagging.rb'
+require Pathname(__FILE__).dirname.expand_path / 'dm-is-taggable' / 'is' / 'tagger.rb'
 
 # Include the plugin in Resource
 module DataMapper

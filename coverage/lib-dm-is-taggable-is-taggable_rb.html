@@ -553,7 +553,7 @@ span.run100 {
 </style>
     </head>
   <body><h3>C0 code coverage information</h3>
-    <p>Generated on Tue Sep 09 15:21:46 +0800 2008 with <a href='http://eigenclass.org/hiki/rcov'>rcov 0.8.1.2</a>
+    <p>Generated on Wed Sep 10 12:06:53 +0800 2008 with <a href='http://eigenclass.org/hiki/rcov'>rcov 0.8.1.2</a>
       </p>
     <hr/>
     <pre><span class='marked0'>Code reported as executed by Ruby looks like this...
@@ -571,24 +571,24 @@ span.run100 {
     </thead>
   <tbody><tr class='light'><td><a href='lib-dm-is-taggable-is-taggable_rb.html'>lib/dm-is-taggable/is/taggable.rb</a>
         </td>
-      <td class='lines_total'><tt>277</tt>
+      <td class='lines_total'><tt>108</tt>
         </td>
-      <td class='lines_code'><tt>189</tt>
+      <td class='lines_code'><tt>83</tt>
         </td>
-      <td><table cellspacing='0' cellpadding='0' align='right'><tr><td><tt class='coverage_total'>96.0%</tt>
+      <td><table cellspacing='0' cellpadding='0' align='right'><tr><td><tt class='coverage_total'>97.2%</tt>
               &nbsp;</td>
-            <td><table cellspacing='0' class='percent_graph' cellpadding='0' width='100'><tr><td class='covered' width='96'/>
-                  <td class='uncovered' width='4'/>
+            <td><table cellspacing='0' class='percent_graph' cellpadding='0' width='100'><tr><td class='covered' width='97'/>
+                  <td class='uncovered' width='3'/>
                   </tr>
                 </table>
               </td>
             </tr>
           </table>
         </td>
-      <td><table cellspacing='0' cellpadding='0' align='right'><tr><td><tt class='coverage_code'>94.7%</tt>
+      <td><table cellspacing='0' cellpadding='0' align='right'><tr><td><tt class='coverage_code'>96.4%</tt>
               &nbsp;</td>
-            <td><table cellspacing='0' class='percent_graph' cellpadding='0' width='100'><tr><td class='covered' width='95'/>
-                  <td class='uncovered' width='5'/>
+            <td><table cellspacing='0' class='percent_graph' cellpadding='0' width='100'><tr><td class='covered' width='96'/>
+                  <td class='uncovered' width='4'/>
                   </tr>
                 </table>
               </td>
@@ -602,279 +602,110 @@ span.run100 {
 </span><span class="marked1"><a name="line2"></a>  2   module Is
 </span><span class="marked0"><a name="line3"></a>  3     module Taggable
 </span><span class="inferred1"><a name="line4"></a>  4 
-</span><span class="inferred0"><a name="line5"></a>  5       ##
-</span><span class="inferred1"><a name="line6"></a>  6       # fired when your plugin gets included into Resource
-</span><span class="inferred0"><a name="line7"></a>  7       #
-</span><span class="marked1"><a name="line8"></a>  8       def self.included(base)
-</span><span class="inferred0"><a name="line9"></a>  9 
-</span><span class="inferred1"><a name="line10"></a> 10       end
-</span><span class="inferred0"><a name="line11"></a> 11 
-</span><span class="inferred1"><a name="line12"></a> 12       ##
-</span><span class="inferred0"><a name="line13"></a> 13       # Methods that should be included in DataMapper::Model.
-</span><span class="inferred1"><a name="line14"></a> 14       # Normally this should just be your generator, so that the namespace
-</span><span class="inferred0"><a name="line15"></a> 15       # does not get cluttered. ClassMethods and InstanceMethods gets added
-</span><span class="inferred1"><a name="line16"></a> 16       # in the specific resources when you fire is :taggable
-</span><span class="inferred0"><a name="line17"></a> 17       ##
-</span><span class="inferred1"><a name="line18"></a> 18 
-</span><span class="marked0"><a name="line19"></a> 19       def is_taggable(options)
-</span><span class="marked1"><a name="line20"></a> 20         extend  DataMapper::Is::Taggable::Shared::ClassMethods
-</span><span class="marked0"><a name="line21"></a> 21         include DataMapper::Is::Taggable::Shared::InstanceMethods
-</span><span class="marked1"><a name="line22"></a> 22         extend  DataMapper::Is::Taggable::Tagged::ClassMethods
-</span><span class="marked0"><a name="line23"></a> 23         include DataMapper::Is::Taggable::Tagged::InstanceMethods
-</span><span class="inferred1"><a name="line24"></a> 24         
-</span><span class="marked0"><a name="line25"></a> 25         attr_reader :tagger_classes
-</span><span class="marked1"><a name="line26"></a> 26         @tagger_classes = options[:by]
-</span><span class="inferred0"><a name="line27"></a> 27         
-</span><span class="marked1"><a name="line28"></a> 28         @tagger_classes.each do |tagger_klass|
-</span><span class="marked0"><a name="line29"></a> 29           taggable_klass = self
-</span><span class="marked1"><a name="line30"></a> 30           tagging_association = tagging_association_of(tagger_klass, taggable_klass)
-</span><span class="marked0"><a name="line31"></a> 31           tag_association = tag_association_of(tagger_klass, taggable_klass)
-</span><span class="marked1"><a name="line32"></a> 32           tagging_class_name = tagging_class_name_of(tagger_klass, taggable_klass)
+</span><span class="marked0"><a name="line5"></a>  5       def is_taggable(options)
+</span><span class="marked1"><a name="line6"></a>  6         extend  DataMapper::Is::Taggable::SharedClassMethods
+</span><span class="marked0"><a name="line7"></a>  7         include DataMapper::Is::Taggable::SharedInstanceMethods
+</span><span class="marked1"><a name="line8"></a>  8         extend  DataMapper::Is::Taggable::TaggableClassMethods
+</span><span class="marked0"><a name="line9"></a>  9         include DataMapper::Is::Taggable::TaggableInstanceMethods
+</span><span class="inferred1"><a name="line10"></a> 10         
+</span><span class="marked0"><a name="line11"></a> 11         attr_reader :tagger_classes
+</span><span class="marked1"><a name="line12"></a> 12         @tagger_classes = options[:by]
+</span><span class="inferred0"><a name="line13"></a> 13         
+</span><span class="marked1"><a name="line14"></a> 14         @tagger_classes.each do |tagger_klass|
+</span><span class="marked0"><a name="line15"></a> 15           taggable_klass = self
+</span><span class="marked1"><a name="line16"></a> 16           tagging_association = tagging_association_of(tagger_klass, taggable_klass)
+</span><span class="marked0"><a name="line17"></a> 17           tag_association = tag_association_of(tagger_klass, taggable_klass)
+</span><span class="marked1"><a name="line18"></a> 18           tagging_class_name = tagging_class_name_of(tagger_klass, taggable_klass)
+</span><span class="inferred0"><a name="line19"></a> 19           
+</span><span class="inferred1"><a name="line20"></a> 20           # remix in the taggings association for each tagger and taggable
+</span><span class="marked0"><a name="line21"></a> 21           remix_opts = {
+</span><span class="inferred1"><a name="line22"></a> 22             :as =&gt; tagging_association,
+</span><span class="inferred0"><a name="line23"></a> 23             :for =&gt; tagger_klass,
+</span><span class="inferred1"><a name="line24"></a> 24             :class_name =&gt; tagging_class_name,
+</span><span class="inferred0"><a name="line25"></a> 25           }
+</span><span class="marked1"><a name="line26"></a> 26           remix n, :taggings, remix_opts
+</span><span class="inferred0"><a name="line27"></a> 27           
+</span><span class="marked1"><a name="line28"></a> 28           enhance :taggings, tagging_class_name.intern do
+</span><span class="marked0"><a name="line29"></a> 29             belongs_to :tag
+</span><span class="marked1"><a name="line30"></a> 30             belongs_to taggable_klass.name.snake_case.intern
+</span><span class="marked0"><a name="line31"></a> 31             belongs_to tagger_klass.name.snake_case.intern
+</span><span class="inferred1"><a name="line32"></a> 32           end
 </span><span class="inferred0"><a name="line33"></a> 33           
-</span><span class="inferred1"><a name="line34"></a> 34           # remix in the taggings association for each tagger and taggable
-</span><span class="marked0"><a name="line35"></a> 35           remix_opts = {
-</span><span class="inferred1"><a name="line36"></a> 36             :as =&gt; tagging_association,
-</span><span class="inferred0"><a name="line37"></a> 37             :for =&gt; tagger_klass,
-</span><span class="inferred1"><a name="line38"></a> 38             :class_name =&gt; tagging_class_name,
-</span><span class="inferred0"><a name="line39"></a> 39             :remixable_key =&gt; tagging_association
-</span><span class="inferred1"><a name="line40"></a> 40           }
-</span><span class="marked0"><a name="line41"></a> 41           remix n, :taggings, remix_opts
-</span><span class="inferred1"><a name="line42"></a> 42           
-</span><span class="marked0"><a name="line43"></a> 43           enhance :taggings, tagging_class_name.intern do
-</span><span class="marked1"><a name="line44"></a> 44             belongs_to :tag
-</span><span class="marked0"><a name="line45"></a> 45             belongs_to taggable_klass.name.snake_case.intern
-</span><span class="marked1"><a name="line46"></a> 46             belongs_to tagger_klass.name.snake_case.intern
-</span><span class="inferred0"><a name="line47"></a> 47           end
-</span><span class="inferred1"><a name="line48"></a> 48           
-</span><span class="marked0"><a name="line49"></a> 49           through_association_name = tagging_association_of(tagger_klass, taggable_klass)
-</span><span class="marked1"><a name="line50"></a> 50           association_name = tag_association_of(tagger_klass, taggable_klass)
-</span><span class="inferred0"><a name="line51"></a> 51           
-</span><span class="inferred1"><a name="line52"></a> 52           # create a psudo-association for taggable
-</span><span class="marked0"><a name="line53"></a> 53           taggable_klass.class_eval(&lt;&lt;-EOS, __FILE__, __LINE__ + 1)
-</span><span class="marked1"><a name="line54"></a> 54             def #{tag_association}
-</span><span class="marked0"><a name="line55"></a> 55               self.send(:'#{tagging_association}').tag
-</span><span class="marked1"><a name="line56"></a> 56             end
-</span><span class="inferred0"><a name="line57"></a> 57           EOS
-</span><span class="inferred1"><a name="line58"></a> 58           
-</span><span class="inferred0"><a name="line59"></a> 59           # create a psudo-association for tagger
-</span><span class="marked1"><a name="line60"></a> 60           tagger_klass.class_eval(&lt;&lt;-EOS, __FILE__, __LINE__ + 1)
-</span><span class="marked0"><a name="line61"></a> 61             def #{tag_association}
-</span><span class="inferred1"><a name="line62"></a> 62               self.send(:'#{tagging_association}').tag
-</span><span class="inferred0"><a name="line63"></a> 63             end
-</span><span class="inferred1"><a name="line64"></a> 64           EOS
-</span><span class="inferred0"><a name="line65"></a> 65           
-</span><span class="inferred1"><a name="line66"></a> 66           # create a has many association for tag
-</span><span class="marked0"><a name="line67"></a> 67           ::Tag.has n, tagging_association.intern, :class_name =&gt; tagging_class_name  
-</span><span class="inferred1"><a name="line68"></a> 68           
-</span><span class="inferred0"><a name="line69"></a> 69         end
-</span><span class="marked1"><a name="line70"></a> 70         puts &quot;________________#{self.name} remixables: #{remixables.inspect}&quot;
-</span><span class="inferred0"><a name="line71"></a> 71       end
-</span><span class="inferred1"><a name="line72"></a> 72       
-</span><span class="marked0"><a name="line73"></a> 73       def is_tagger(options=nil)
-</span><span class="marked1"><a name="line74"></a> 74         extend  DataMapper::Is::Taggable::Shared::ClassMethods
-</span><span class="marked0"><a name="line75"></a> 75         include DataMapper::Is::Taggable::Shared::InstanceMethods
-</span><span class="marked1"><a name="line76"></a> 76         extend  DataMapper::Is::Taggable::Tagger::ClassMethods
-</span><span class="marked0"><a name="line77"></a> 77         include DataMapper::Is::Taggable::Tagger::InstanceMethods
-</span><span class="inferred1"><a name="line78"></a> 78       end
-</span><span class="inferred0"><a name="line79"></a> 79       
-</span><span class="marked1"><a name="line80"></a> 80       def is_tag(options=nil)
-</span><span class="marked0"><a name="line81"></a> 81         extend  DataMapper::Is::Taggable::Tag::ClassMethods
-</span><span class="marked1"><a name="line82"></a> 82         include DataMapper::Is::Taggable::Tag::InstanceMethods
-</span><span class="marked0"><a name="line83"></a> 83         property :id, DataMapper::Types::Serial
-</span><span class="marked1"><a name="line84"></a> 84         property :name, String, :length =&gt; 255, :unique =&gt; true, :nullable =&gt; false
-</span><span class="marked0"><a name="line85"></a> 85         has n, :taggings
-</span><span class="inferred1"><a name="line86"></a> 86       end
-</span><span class="inferred0"><a name="line87"></a> 87       
-</span><span class="marked1"><a name="line88"></a> 88       def is_tagging(options=nil)
-</span><span class="marked0"><a name="line89"></a> 89         extend  DataMapper::Is::Taggable::Tagging::ClassMethods
-</span><span class="marked1"><a name="line90"></a> 90         include DataMapper::Is::Taggable::Tagging::InstanceMethods
-</span><span class="marked0"><a name="line91"></a> 91         is :remixable
-</span><span class="marked1"><a name="line92"></a> 92         property :id, DataMapper::Types::Serial
-</span><span class="marked0"><a name="line93"></a> 93         property :tag_id, Integer
-</span><span class="inferred1"><a name="line94"></a> 94       end
-</span><span class="inferred0"><a name="line95"></a> 95 
-</span><span class="marked1"><a name="line96"></a> 96       module Tagged
-</span><span class="marked0"><a name="line97"></a> 97         module ClassMethods
-</span><span class="inferred1"><a name="line98"></a> 98           
-</span><span class="marked0"><a name="line99"></a> 99           def with_all_tags_and_by(*params)
-</span><span class="inferred1"><a name="line100"></a>100             
-</span><span class="inferred0"><a name="line101"></a>101           end
-</span><span class="inferred1"><a name="line102"></a>102           
-</span><span class="marked0"><a name="line103"></a>103           def with_all_tags(*tags)
-</span><span class="marked1"><a name="line104"></a>104             tags = TagList.from(tags)
-</span><span class="marked0"><a name="line105"></a>105             taggable_class = self
-</span><span class="inferred1"><a name="line106"></a>106 
-</span><span class="marked0"><a name="line107"></a>107             rv = @tagger_classes.map do |tagger_class|
-</span><span class="marked1"><a name="line108"></a>108               tagging_table_name = tagging_class_of(tagger_class, taggable_class).storage_name
-</span><span class="marked0"><a name="line109"></a>109               tag_table_name = ::Tag.storage_name
-</span><span class="inferred1"><a name="line110"></a>110               
-</span><span class="marked0"><a name="line111"></a>111               conditions = [&quot;
-</span><span class="uncovered1"><a name="line112"></a>112                 (SELECT COUNT(*) FROM #{tagging_table_name}
-</span><span class="uncovered0"><a name="line113"></a>113                  INNER JOIN #{tag_table_name} ON #{tagging_table_name}.tag_id = #{tag_table_name}.id
-</span><span class="marked1"><a name="line114"></a>114                  WHERE #{tagging_table_name}.#{Extlib::Inflection.foreign_key(taggable_class.name)} = #{storage_name}.id AND
-</span><span class="marked0"><a name="line115"></a>115                  #{tag_table_name}.name IN (#{tags.map{|t| '&quot;' &lt;&lt; t &lt;&lt; '&quot;'}.join(', ')})) = ?
-</span><span class="uncovered1"><a name="line116"></a>116               &quot;, tags.size ]
-</span><span class="inferred0"><a name="line117"></a>117               
-</span><span class="inferred1"><a name="line118"></a>118               all(
-</span><span class="marked0"><a name="line119"></a>119                 self.send(tagging_association_of(tagger_class, taggable_class)).tag.name =&gt; tags.to_a, 
-</span><span class="marked1"><a name="line120"></a>120                 :conditions =&gt; conditions
-</span><span class="inferred0"><a name="line121"></a>121               )
-</span><span class="inferred1"><a name="line122"></a>122               
-</span><span class="inferred0"><a name="line123"></a>123             end.flatten!
-</span><span class="marked1"><a name="line124"></a>124             rv.uniq!
-</span><span class="marked0"><a name="line125"></a>125             rv.nil? ? [] : rv
-</span><span class="inferred1"><a name="line126"></a>126           end
-</span><span class="inferred0"><a name="line127"></a>127           
-</span><span class="marked1"><a name="line128"></a>128           def with_any_tags(*tags)
-</span><span class="marked0"><a name="line129"></a>129             tags = TagList.from(tags)
-</span><span class="marked1"><a name="line130"></a>130             taggable_class = self
-</span><span class="inferred0"><a name="line131"></a>131 
-</span><span class="marked1"><a name="line132"></a>132             rv = @tagger_classes.map do |tagger_class|
-</span><span class="marked0"><a name="line133"></a>133               all(self.send(tagging_association_of(tagger_class, taggable_class)).tag.name =&gt; tags.to_a)
-</span><span class="inferred1"><a name="line134"></a>134             end.flatten!
-</span><span class="marked0"><a name="line135"></a>135             rv.uniq!
-</span><span class="marked1"><a name="line136"></a>136             rv.nil? ? [] : rv
-</span><span class="inferred0"><a name="line137"></a>137           end
-</span><span class="inferred1"><a name="line138"></a>138           
-</span><span class="inferred0"><a name="line139"></a>139           
-</span><span class="inferred1"><a name="line140"></a>140         end # ClassMethods
-</span><span class="inferred0"><a name="line141"></a>141 
-</span><span class="marked1"><a name="line142"></a>142         module InstanceMethods
-</span><span class="inferred0"><a name="line143"></a>143           
-</span><span class="marked1"><a name="line144"></a>144           def tag_by(*params)
-</span><span class="inferred0"><a name="line145"></a>145             # get the first paramater as the taggable object
-</span><span class="marked1"><a name="line146"></a>146             tagger = params.delete_at(0)
-</span><span class="marked0"><a name="line147"></a>147             taggable = self
-</span><span class="marked1"><a name="line148"></a>148             self.class.create_taggings(tagger, taggable, params)
-</span><span class="inferred0"><a name="line149"></a>149           end
-</span><span class="inferred1"><a name="line150"></a>150           
-</span><span class="inferred0"><a name="line151"></a>151         end # InstanceMethods
-</span><span class="inferred1"><a name="line152"></a>152       end # Tagged
-</span><span class="inferred0"><a name="line153"></a>153             
-</span><span class="marked1"><a name="line154"></a>154       module Tagger
-</span><span class="marked0"><a name="line155"></a>155         module ClassMethods
-</span><span class="inferred1"><a name="line156"></a>156           
-</span><span class="marked0"><a name="line157"></a>157           def all_similar_by_tags
-</span><span class="inferred1"><a name="line158"></a>158             
-</span><span class="inferred0"><a name="line159"></a>159           end
-</span><span class="inferred1"><a name="line160"></a>160           
-</span><span class="inferred0"><a name="line161"></a>161           
-</span><span class="inferred1"><a name="line162"></a>162         end # ClassMethods
-</span><span class="inferred0"><a name="line163"></a>163 
-</span><span class="marked1"><a name="line164"></a>164         module InstanceMethods
-</span><span class="inferred0"><a name="line165"></a>165           
-</span><span class="marked1"><a name="line166"></a>166           def all_tagged_with
-</span><span class="inferred0"><a name="line167"></a>167             
-</span><span class="inferred1"><a name="line168"></a>168           end
-</span><span class="inferred0"><a name="line169"></a>169           
-</span><span class="marked1"><a name="line170"></a>170           def tag_on(*params)
-</span><span class="inferred0"><a name="line171"></a>171             # get the first paramater as the taggable object
-</span><span class="marked1"><a name="line172"></a>172             tagger = self
-</span><span class="marked0"><a name="line173"></a>173             taggable = params.delete_at(0)
-</span><span class="marked1"><a name="line174"></a>174             self.class.create_taggings(tagger, taggable, params)
-</span><span class="inferred0"><a name="line175"></a>175           end
-</span><span class="inferred1"><a name="line176"></a>176 
-</span><span class="inferred0"><a name="line177"></a>177         end # InstanceMethods
-</span><span class="inferred1"><a name="line178"></a>178       end # Tagger
-</span><span class="inferred0"><a name="line179"></a>179       
-</span><span class="marked1"><a name="line180"></a>180       module Tag
-</span><span class="marked0"><a name="line181"></a>181         module ClassMethods
-</span><span class="inferred1"><a name="line182"></a>182           
-</span><span class="marked0"><a name="line183"></a>183           def all_by
-</span><span class="inferred1"><a name="line184"></a>184             
-</span><span class="inferred0"><a name="line185"></a>185           end
-</span><span class="inferred1"><a name="line186"></a>186           
-</span><span class="marked0"><a name="line187"></a>187           def fetch(name)
-</span><span class="marked1"><a name="line188"></a>188             first(:name =&gt; name) || create(:name =&gt; name)
-</span><span class="marked0"><a name="line189"></a>189           end
-</span><span class="inferred1"><a name="line190"></a>190           
-</span><span class="marked0"><a name="line191"></a>191           def get(name)
-</span><span class="marked1"><a name="line192"></a>192             first(:name =&gt; name)
-</span><span class="marked0"><a name="line193"></a>193           end
-</span><span class="inferred1"><a name="line194"></a>194           
-</span><span class="inferred0"><a name="line195"></a>195           
-</span><span class="inferred1"><a name="line196"></a>196         end # ClassMethods
-</span><span class="inferred0"><a name="line197"></a>197 
-</span><span class="marked1"><a name="line198"></a>198         module InstanceMethods
-</span><span class="inferred0"><a name="line199"></a>199           
-</span><span class="marked1"><a name="line200"></a>200           def related_tags
-</span><span class="inferred0"><a name="line201"></a>201             
-</span><span class="inferred1"><a name="line202"></a>202           end
-</span><span class="inferred0"><a name="line203"></a>203           
-</span><span class="marked1"><a name="line204"></a>204           def popular_by_tags
-</span><span class="inferred0"><a name="line205"></a>205             
-</span><span class="inferred1"><a name="line206"></a>206           end
-</span><span class="inferred0"><a name="line207"></a>207           
-</span><span class="marked1"><a name="line208"></a>208           def tagged_together_count
-</span><span class="inferred0"><a name="line209"></a>209             
-</span><span class="inferred1"><a name="line210"></a>210           end
-</span><span class="inferred0"><a name="line211"></a>211           
-</span><span class="marked1"><a name="line212"></a>212           def tagged_count
-</span><span class="inferred0"><a name="line213"></a>213             
-</span><span class="inferred1"><a name="line214"></a>214           end
-</span><span class="inferred0"><a name="line215"></a>215 
-</span><span class="inferred1"><a name="line216"></a>216         end # InstanceMethods
-</span><span class="inferred0"><a name="line217"></a>217       end # Tag
-</span><span class="inferred1"><a name="line218"></a>218       
-</span><span class="marked0"><a name="line219"></a>219       module Tagging
-</span><span class="marked1"><a name="line220"></a>220         module ClassMethods
-</span><span class="inferred0"><a name="line221"></a>221         end
-</span><span class="inferred1"><a name="line222"></a>222         
-</span><span class="marked0"><a name="line223"></a>223         module InstanceMethods
-</span><span class="inferred1"><a name="line224"></a>224         end
-</span><span class="inferred0"><a name="line225"></a>225       end
-</span><span class="inferred1"><a name="line226"></a>226       
-</span><span class="marked0"><a name="line227"></a>227       module Shared
-</span><span class="marked1"><a name="line228"></a>228         module ClassMethods
-</span><span class="marked0"><a name="line229"></a>229           def tagging_association_of(tagger_klass, taggable_klass)
-</span><span class="marked1"><a name="line230"></a>230             Extlib::Inflection.tableize(tagging_class_name_of(tagger_klass, taggable_klass))
-</span><span class="marked0"><a name="line231"></a>231           end
-</span><span class="inferred1"><a name="line232"></a>232           
-</span><span class="marked0"><a name="line233"></a>233           def tag_association_of(tagger_klass, taggable_klass)
-</span><span class="marked1"><a name="line234"></a>234             tagging_association_of(tagger_klass, taggable_klass).gsub(/taggings$/, &quot;tags&quot;)
-</span><span class="marked0"><a name="line235"></a>235           end
-</span><span class="inferred1"><a name="line236"></a>236           
-</span><span class="marked0"><a name="line237"></a>237           def tagging_class_name_of(tagger_klass, taggable_klass)
-</span><span class="marked1"><a name="line238"></a>238             Extlib::Inflection.demodulize(taggable_klass.to_s) &lt;&lt; Extlib::Inflection.demodulize(tagger_klass.to_s) &lt;&lt; &quot;Tagging&quot;
-</span><span class="marked0"><a name="line239"></a>239           end
-</span><span class="inferred1"><a name="line240"></a>240 
-</span><span class="marked0"><a name="line241"></a>241           def tagging_class_of(tagger_klass, taggable_klass)
-</span><span class="marked1"><a name="line242"></a>242             Extlib::Inflection.constantize(tagging_class_name_of(tagger_klass, taggable_klass))
-</span><span class="marked0"><a name="line243"></a>243           end
-</span><span class="inferred1"><a name="line244"></a>244           
-</span><span class="marked0"><a name="line245"></a>245           def create_taggings(tagger, taggable, tags=nil)
-</span><span class="marked1"><a name="line246"></a>246             return if tags.nil? || tags.empty?
-</span><span class="marked0"><a name="line247"></a>247             tags = TagList.from(tags)
-</span><span class="inferred1"><a name="line248"></a>248             
-</span><span class="inferred0"><a name="line249"></a>249             # TODO: add checks to see if tags can be added
-</span><span class="inferred1"><a name="line250"></a>250             #raise Exception(&quot;Cannot Tag #{taggable.class}!&quot;) if !taggable.is_a?(Article) &amp;&amp; !taggable.is_a?(Picture)
-</span><span class="marked0"><a name="line251"></a>251             tagger_klass = tagger.class
-</span><span class="marked1"><a name="line252"></a>252             taggable_klass = taggable.class
-</span><span class="marked0"><a name="line253"></a>253             tagging_klass = tagging_class_of(tagger_klass, taggable_klass)
-</span><span class="marked1"><a name="line254"></a>254             tags.each do |tag|
-</span><span class="marked0"><a name="line255"></a>255               tag_obj = ::Tag.fetch(tag)
-</span><span class="marked1"><a name="line256"></a>256               tagging = tagging_klass.new(:tag =&gt; tag_obj)
-</span><span class="inferred0"><a name="line257"></a>257               
-</span><span class="marked1"><a name="line258"></a>258               [tagger, taggable].each{|obj| obj.tagging_association_of(tagger_klass, taggable_klass) &lt;&lt; tagging}
-</span><span class="marked0"><a name="line259"></a>259               success = tagging.save
-</span><span class="inferred1"><a name="line260"></a>260             end # end of each
-</span><span class="inferred0"><a name="line261"></a>261           end
-</span><span class="inferred1"><a name="line262"></a>262         end
-</span><span class="inferred0"><a name="line263"></a>263         
-</span><span class="marked1"><a name="line264"></a>264         module InstanceMethods
-</span><span class="marked0"><a name="line265"></a>265           def tagging_association_of(tagger_klass, taggable_klass)
-</span><span class="marked1"><a name="line266"></a>266             self.send(self.class.tagging_association_of(tagger_klass, taggable_klass))
-</span><span class="marked0"><a name="line267"></a>267           end
-</span><span class="inferred1"><a name="line268"></a>268           
-</span><span class="marked0"><a name="line269"></a>269           def tag_association_of(tagger_klass, taggable_klass)
-</span><span class="uncovered1"><a name="line270"></a>270             self.send(self.class.tag_association_of(tagger_klass, taggable_klass))
-</span><span class="uncovered0"><a name="line271"></a>271           end
-</span><span class="uncovered1"><a name="line272"></a>272         end
-</span><span class="uncovered0"><a name="line273"></a>273       end
-</span><span class="uncovered1"><a name="line274"></a>274 
-</span><span class="uncovered0"><a name="line275"></a>275     end # Taggable
-</span><span class="uncovered1"><a name="line276"></a>276   end # Is
-</span><span class="uncovered0"><a name="line277"></a>277 end # DataMapper
+</span><span class="marked1"><a name="line34"></a> 34           through_association_name = tagging_association_of(tagger_klass, taggable_klass)
+</span><span class="marked0"><a name="line35"></a> 35           association_name = tag_association_of(tagger_klass, taggable_klass)
+</span><span class="inferred1"><a name="line36"></a> 36           
+</span><span class="inferred0"><a name="line37"></a> 37           # create a psudo-association for taggable
+</span><span class="marked1"><a name="line38"></a> 38           taggable_klass.class_eval(&lt;&lt;-EOS, __FILE__, __LINE__ + 1)
+</span><span class="marked0"><a name="line39"></a> 39             def #{tag_association}
+</span><span class="marked1"><a name="line40"></a> 40               self.send(:'#{tagging_association}').tag
+</span><span class="marked0"><a name="line41"></a> 41             end
+</span><span class="inferred1"><a name="line42"></a> 42           EOS
+</span><span class="inferred0"><a name="line43"></a> 43           
+</span><span class="inferred1"><a name="line44"></a> 44           # create a psudo-association for tagger
+</span><span class="marked0"><a name="line45"></a> 45           tagger_klass.class_eval(&lt;&lt;-EOS, __FILE__, __LINE__ + 1)
+</span><span class="marked1"><a name="line46"></a> 46             def #{tag_association}
+</span><span class="inferred0"><a name="line47"></a> 47               self.send(:'#{tagging_association}').tag
+</span><span class="inferred1"><a name="line48"></a> 48             end
+</span><span class="inferred0"><a name="line49"></a> 49           EOS
+</span><span class="inferred1"><a name="line50"></a> 50           
+</span><span class="inferred0"><a name="line51"></a> 51           # create a has many association for tag
+</span><span class="marked1"><a name="line52"></a> 52           ::Tag.has n, tagging_association.intern, :class_name =&gt; tagging_class_name          
+</span><span class="inferred0"><a name="line53"></a> 53         end
+</span><span class="inferred1"><a name="line54"></a> 54       end
+</span><span class="inferred0"><a name="line55"></a> 55       
+</span><span class="marked1"><a name="line56"></a> 56       module TaggableClassMethods
+</span><span class="marked0"><a name="line57"></a> 57         def with_all_tags_and_by(*params)
+</span><span class="inferred1"><a name="line58"></a> 58         end
+</span><span class="inferred0"><a name="line59"></a> 59         
+</span><span class="marked1"><a name="line60"></a> 60         def with_all_tags(*tags)
+</span><span class="marked0"><a name="line61"></a> 61           tags = TagList.from(tags)
+</span><span class="marked1"><a name="line62"></a> 62           taggable_class = self
+</span><span class="inferred0"><a name="line63"></a> 63 
+</span><span class="marked1"><a name="line64"></a> 64           rv = @tagger_classes.map do |tagger_class|
+</span><span class="marked0"><a name="line65"></a> 65             tagging_table_name = tagging_class_of(tagger_class, taggable_class).storage_name
+</span><span class="marked1"><a name="line66"></a> 66             tag_table_name = ::Tag.storage_name
+</span><span class="inferred0"><a name="line67"></a> 67             
+</span><span class="marked1"><a name="line68"></a> 68             conditions = [&quot;
+</span><span class="uncovered0"><a name="line69"></a> 69               (SELECT COUNT(*) FROM #{tagging_table_name}
+</span><span class="uncovered1"><a name="line70"></a> 70                INNER JOIN #{tag_table_name} ON #{tagging_table_name}.tag_id = #{tag_table_name}.id
+</span><span class="marked0"><a name="line71"></a> 71                WHERE #{tagging_table_name}.#{Extlib::Inflection.foreign_key(taggable_class.name)} = #{storage_name}.id AND
+</span><span class="marked1"><a name="line72"></a> 72                #{tag_table_name}.name IN (#{tags.map{|t| '&quot;' &lt;&lt; t &lt;&lt; '&quot;'}.join(', ')})) = ?
+</span><span class="uncovered0"><a name="line73"></a> 73             &quot;, tags.size ]
+</span><span class="inferred1"><a name="line74"></a> 74             
+</span><span class="inferred0"><a name="line75"></a> 75             all(
+</span><span class="marked1"><a name="line76"></a> 76               self.send(tagging_association_of(tagger_class, taggable_class)).tag.name =&gt; tags.to_a, 
+</span><span class="marked0"><a name="line77"></a> 77               :conditions =&gt; conditions
+</span><span class="inferred1"><a name="line78"></a> 78             )
+</span><span class="inferred0"><a name="line79"></a> 79             
+</span><span class="inferred1"><a name="line80"></a> 80           end.flatten!
+</span><span class="marked0"><a name="line81"></a> 81           rv.uniq!
+</span><span class="marked1"><a name="line82"></a> 82           rv.nil? ? [] : rv
+</span><span class="inferred0"><a name="line83"></a> 83         end
+</span><span class="inferred1"><a name="line84"></a> 84         
+</span><span class="marked0"><a name="line85"></a> 85         def with_any_tags(*tags)
+</span><span class="marked1"><a name="line86"></a> 86           tags = TagList.from(tags)
+</span><span class="marked0"><a name="line87"></a> 87           taggable_class = self
+</span><span class="inferred1"><a name="line88"></a> 88 
+</span><span class="marked0"><a name="line89"></a> 89           rv = @tagger_classes.map do |tagger_class|
+</span><span class="marked1"><a name="line90"></a> 90             all(self.send(tagging_association_of(tagger_class, taggable_class)).tag.name =&gt; tags.to_a)
+</span><span class="inferred0"><a name="line91"></a> 91           end.flatten!
+</span><span class="marked1"><a name="line92"></a> 92           rv.uniq!
+</span><span class="marked0"><a name="line93"></a> 93           rv.nil? ? [] : rv
+</span><span class="inferred1"><a name="line94"></a> 94         end
+</span><span class="inferred0"><a name="line95"></a> 95       end # ClassMethods
+</span><span class="inferred1"><a name="line96"></a> 96 
+</span><span class="marked0"><a name="line97"></a> 97       module TaggableInstanceMethods
+</span><span class="marked1"><a name="line98"></a> 98         def tag_by(*params)
+</span><span class="inferred0"><a name="line99"></a> 99           # get the first paramater as the taggable object
+</span><span class="marked1"><a name="line100"></a>100           tagger = params.delete_at(0)
+</span><span class="marked0"><a name="line101"></a>101           taggable = self
+</span><span class="marked1"><a name="line102"></a>102           self.class.create_taggings(tagger, taggable, params)
+</span><span class="inferred0"><a name="line103"></a>103         end
+</span><span class="inferred1"><a name="line104"></a>104       end # InstanceMethods
+</span><span class="inferred0"><a name="line105"></a>105 
+</span><span class="inferred1"><a name="line106"></a>106     end # Taggable
+</span><span class="inferred0"><a name="line107"></a>107   end # Is
+</span><span class="inferred1"><a name="line108"></a>108 end # DataMapper
 </span></pre><hr/>
     <p>Generated using the <a href='http://eigenclass.org/hiki.rb?rcov'>rcov code coverage analysis tool for Ruby</a>
    version 0.8.1.2.</p>
