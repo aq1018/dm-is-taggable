@@ -20,6 +20,15 @@ module DataMapper
         
         def create_taggings(tagger, taggable, tags=nil)
           return if tags.nil? || tags.empty?
+
+          unless tagger.respond_to?(:tagger?) && tagger.tagger? && !tagger.is_a?(Class)
+            raise Exception.new("#{tagger} is not a tagger datamapper resource object!")
+          end
+          
+          unless taggable.respond_to?(:taggable?) && taggable.taggable? && !taggable.is_a?(Class)
+            raise Exception.new("#{taggable} is not a taggable datamapper resource object!")
+          end
+                    
           tags = TagList.from(tags)
           
           # TODO: add checks to see if tags can be added

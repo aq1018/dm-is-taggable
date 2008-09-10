@@ -553,7 +553,7 @@ span.run100 {
 </style>
     </head>
   <body><h3>C0 code coverage information</h3>
-    <p>Generated on Wed Sep 10 12:06:53 +0800 2008 with <a href='http://eigenclass.org/hiki/rcov'>rcov 0.8.1.2</a>
+    <p>Generated on Wed Sep 10 18:38:41 +0800 2008 with <a href='http://eigenclass.org/hiki/rcov'>rcov 0.8.1.2</a>
       </p>
     <hr/>
     <pre><span class='marked0'>Code reported as executed by Ruby looks like this...
@@ -571,24 +571,24 @@ span.run100 {
     </thead>
   <tbody><tr class='light'><td><a href='lib-dm-is-taggable-is-tagger_rb.html'>lib/dm-is-taggable/is/tagger.rb</a>
         </td>
-      <td class='lines_total'><tt>30</tt>
+      <td class='lines_total'><tt>51</tt>
         </td>
-      <td class='lines_code'><tt>25</tt>
+      <td class='lines_code'><tt>40</tt>
         </td>
-      <td><table cellspacing='0' cellpadding='0' align='right'><tr><td><tt class='coverage_total'>100.0%</tt>
+      <td><table cellspacing='0' cellpadding='0' align='right'><tr><td><tt class='coverage_total'>90.2%</tt>
               &nbsp;</td>
-            <td><table cellspacing='0' class='percent_graph' cellpadding='0' width='100'><tr><td class='covered' width='100'/>
-                  <td class='uncovered' width='0'/>
+            <td><table cellspacing='0' class='percent_graph' cellpadding='0' width='100'><tr><td class='covered' width='90'/>
+                  <td class='uncovered' width='10'/>
                   </tr>
                 </table>
               </td>
             </tr>
           </table>
         </td>
-      <td><table cellspacing='0' cellpadding='0' align='right'><tr><td><tt class='coverage_code'>100.0%</tt>
+      <td><table cellspacing='0' cellpadding='0' align='right'><tr><td><tt class='coverage_code'>87.5%</tt>
               &nbsp;</td>
-            <td><table cellspacing='0' class='percent_graph' cellpadding='0' width='100'><tr><td class='covered' width='100'/>
-                  <td class='uncovered' width='0'/>
+            <td><table cellspacing='0' class='percent_graph' cellpadding='0' width='100'><tr><td class='covered' width='88'/>
+                  <td class='uncovered' width='12'/>
                   </tr>
                 </table>
               </td>
@@ -607,27 +607,48 @@ span.run100 {
 </span><span class="marked1"><a name="line7"></a> 7         include DataMapper::Is::Taggable::SharedInstanceMethods
 </span><span class="marked0"><a name="line8"></a> 8         extend  DataMapper::Is::Taggable::TaggerClassMethods
 </span><span class="marked1"><a name="line9"></a> 9         include DataMapper::Is::Taggable::TaggerInstanceMethods
-</span><span class="inferred0"><a name="line10"></a>10       end
-</span><span class="inferred1"><a name="line11"></a>11       
-</span><span class="marked0"><a name="line12"></a>12       module TaggerClassMethods 
-</span><span class="marked1"><a name="line13"></a>13         def all_similar_by_tags
-</span><span class="inferred0"><a name="line14"></a>14         end
-</span><span class="inferred1"><a name="line15"></a>15       end # ClassMethods
-</span><span class="inferred0"><a name="line16"></a>16 
-</span><span class="marked1"><a name="line17"></a>17       module TaggerInstanceMethods
-</span><span class="marked0"><a name="line18"></a>18         def all_tagged_with
-</span><span class="inferred1"><a name="line19"></a>19         end
-</span><span class="inferred0"><a name="line20"></a>20         
-</span><span class="marked1"><a name="line21"></a>21         def tag_on(*params)
-</span><span class="inferred0"><a name="line22"></a>22           # get the first paramater as the taggable object
-</span><span class="marked1"><a name="line23"></a>23           tagger = self
-</span><span class="marked0"><a name="line24"></a>24           taggable = params.delete_at(0)
-</span><span class="marked1"><a name="line25"></a>25           self.class.create_taggings(tagger, taggable, params)
-</span><span class="inferred0"><a name="line26"></a>26         end
-</span><span class="inferred1"><a name="line27"></a>27       end # InstanceMethods
-</span><span class="inferred0"><a name="line28"></a>28     end
-</span><span class="inferred1"><a name="line29"></a>29   end
-</span><span class="inferred0"><a name="line30"></a>30 end
+</span><span class="inferred0"><a name="line10"></a>10 
+</span><span class="marked1"><a name="line11"></a>11         @taggable_classes = []
+</span><span class="inferred0"><a name="line12"></a>12       end
+</span><span class="inferred1"><a name="line13"></a>13       
+</span><span class="marked0"><a name="line14"></a>14       module TaggerClassMethods 
+</span><span class="marked1"><a name="line15"></a>15         attr_reader :taggable_classes
+</span><span class="marked0"><a name="line16"></a>16         def tagger?;true;end
+</span><span class="marked1"><a name="line17"></a>17         def taggable?;false;end
+</span><span class="marked0"><a name="line18"></a>18         def tagger_class;self;end
+</span><span class="inferred1"><a name="line19"></a>19         
+</span><span class="marked0"><a name="line20"></a>20         def all_similar_by_tags
+</span><span class="inferred1"><a name="line21"></a>21         end
+</span><span class="inferred0"><a name="line22"></a>22         
+</span><span class="inferred1"><a name="line23"></a>23       end # ClassMethods
+</span><span class="inferred0"><a name="line24"></a>24 
+</span><span class="marked1"><a name="line25"></a>25       module TaggerInstanceMethods
+</span><span class="marked0"><a name="line26"></a>26         def tagger?;true;end
+</span><span class="marked1"><a name="line27"></a>27         def taggable?;false;end
+</span><span class="marked0"><a name="line28"></a>28         def tagger_class;self.class;end
+</span><span class="marked1"><a name="line29"></a>29         def tagger;self;end
+</span><span class="inferred0"><a name="line30"></a>30         
+</span><span class="marked1"><a name="line31"></a>31         def can_tag_on?(taggable)
+</span><span class="uncovered0"><a name="line32"></a>32           if taggable.is_a?(Class)
+</span><span class="uncovered1"><a name="line33"></a>33             return self.class.taggable_classes.include?(taggable)
+</span><span class="uncovered0"><a name="line34"></a>34           end
+</span><span class="uncovered1"><a name="line35"></a>35           return self.class.taggable_classes.include?(taggable.class)
+</span><span class="uncovered0"><a name="line36"></a>36         end
+</span><span class="inferred1"><a name="line37"></a>37 
+</span><span class="marked0"><a name="line38"></a>38         def all_tagged_with(*params)
+</span><span class="inferred1"><a name="line39"></a>39           
+</span><span class="inferred0"><a name="line40"></a>40         end
+</span><span class="inferred1"><a name="line41"></a>41         
+</span><span class="marked0"><a name="line42"></a>42         def tag_with(*params)
+</span><span class="inferred1"><a name="line43"></a>43           # get the first paramater as the taggable object
+</span><span class="marked0"><a name="line44"></a>44           tagger = self
+</span><span class="marked1"><a name="line45"></a>45           taggable = params.delete_at(0)
+</span><span class="marked0"><a name="line46"></a>46           self.class.create_taggings(tagger, taggable, params)
+</span><span class="inferred1"><a name="line47"></a>47         end
+</span><span class="inferred0"><a name="line48"></a>48       end # InstanceMethods
+</span><span class="inferred1"><a name="line49"></a>49     end
+</span><span class="inferred0"><a name="line50"></a>50   end
+</span><span class="inferred1"><a name="line51"></a>51 end
 </span></pre><hr/>
     <p>Generated using the <a href='http://eigenclass.org/hiki.rb?rcov'>rcov code coverage analysis tool for Ruby</a>
    version 0.8.1.2.</p>

@@ -553,7 +553,7 @@ span.run100 {
 </style>
     </head>
   <body><h3>C0 code coverage information</h3>
-    <p>Generated on Wed Sep 10 12:06:53 +0800 2008 with <a href='http://eigenclass.org/hiki/rcov'>rcov 0.8.1.2</a>
+    <p>Generated on Wed Sep 10 18:38:41 +0800 2008 with <a href='http://eigenclass.org/hiki/rcov'>rcov 0.8.1.2</a>
       </p>
     <hr/>
     <pre><span class='marked0'>Code reported as executed by Ruby looks like this...
@@ -571,24 +571,24 @@ span.run100 {
     </thead>
   <tbody><tr class='light'><td><a href='lib-dm-is-taggable-is-shared_rb.html'>lib/dm-is-taggable/is/shared.rb</a>
         </td>
-      <td class='lines_total'><tt>51</tt>
+      <td class='lines_total'><tt>60</tt>
         </td>
-      <td class='lines_code'><tt>41</tt>
+      <td class='lines_code'><tt>47</tt>
         </td>
-      <td><table cellspacing='0' cellpadding='0' align='right'><tr><td><tt class='coverage_total'>88.2%</tt>
+      <td><table cellspacing='0' cellpadding='0' align='right'><tr><td><tt class='coverage_total'>83.3%</tt>
               &nbsp;</td>
-            <td><table cellspacing='0' class='percent_graph' cellpadding='0' width='100'><tr><td class='covered' width='88'/>
-                  <td class='uncovered' width='12'/>
+            <td><table cellspacing='0' class='percent_graph' cellpadding='0' width='100'><tr><td class='covered' width='83'/>
+                  <td class='uncovered' width='17'/>
                   </tr>
                 </table>
               </td>
             </tr>
           </table>
         </td>
-      <td><table cellspacing='0' cellpadding='0' align='right'><tr><td><tt class='coverage_code'>85.4%</tt>
+      <td><table cellspacing='0' cellpadding='0' align='right'><tr><td><tt class='coverage_code'>78.7%</tt>
               &nbsp;</td>
-            <td><table cellspacing='0' class='percent_graph' cellpadding='0' width='100'><tr><td class='covered' width='85'/>
-                  <td class='uncovered' width='15'/>
+            <td><table cellspacing='0' class='percent_graph' cellpadding='0' width='100'><tr><td class='covered' width='79'/>
+                  <td class='uncovered' width='21'/>
                   </tr>
                 </table>
               </td>
@@ -620,35 +620,44 @@ span.run100 {
 </span><span class="inferred1"><a name="line20"></a>20         
 </span><span class="marked0"><a name="line21"></a>21         def create_taggings(tagger, taggable, tags=nil)
 </span><span class="marked1"><a name="line22"></a>22           return if tags.nil? || tags.empty?
-</span><span class="marked0"><a name="line23"></a>23           tags = TagList.from(tags)
-</span><span class="inferred1"><a name="line24"></a>24           
-</span><span class="inferred0"><a name="line25"></a>25           # TODO: add checks to see if tags can be added
-</span><span class="inferred1"><a name="line26"></a>26           #raise Exception(&quot;Cannot Tag #{taggable.class}!&quot;) if !taggable.is_a?(Article) &amp;&amp; !taggable.is_a?(Picture)
-</span><span class="marked0"><a name="line27"></a>27           tagger_klass = tagger.class
-</span><span class="marked1"><a name="line28"></a>28           taggable_klass = taggable.class
-</span><span class="marked0"><a name="line29"></a>29           tagging_klass = tagging_class_of(tagger_klass, taggable_klass)
-</span><span class="marked1"><a name="line30"></a>30           tags.each do |tag|
-</span><span class="marked0"><a name="line31"></a>31             tag_obj = ::Tag.fetch(tag)
-</span><span class="marked1"><a name="line32"></a>32             tagging = tagging_klass.new(:tag =&gt; tag_obj)
-</span><span class="inferred0"><a name="line33"></a>33             
-</span><span class="marked1"><a name="line34"></a>34             [tagger, taggable].each{|obj| obj.tagging_association_of(tagger_klass, taggable_klass) &lt;&lt; tagging}
-</span><span class="marked0"><a name="line35"></a>35             success = tagging.save
-</span><span class="inferred1"><a name="line36"></a>36           end # end of each
-</span><span class="inferred0"><a name="line37"></a>37         end
-</span><span class="inferred1"><a name="line38"></a>38       end
-</span><span class="inferred0"><a name="line39"></a>39       
-</span><span class="marked1"><a name="line40"></a>40       module SharedInstanceMethods
-</span><span class="marked0"><a name="line41"></a>41         def tagging_association_of(tagger_klass, taggable_klass)
-</span><span class="marked1"><a name="line42"></a>42           self.send(self.class.tagging_association_of(tagger_klass, taggable_klass))
-</span><span class="marked0"><a name="line43"></a>43         end
-</span><span class="inferred1"><a name="line44"></a>44         
-</span><span class="marked0"><a name="line45"></a>45         def tag_association_of(tagger_klass, taggable_klass)
-</span><span class="uncovered1"><a name="line46"></a>46           self.send(self.class.tag_association_of(tagger_klass, taggable_klass))
-</span><span class="uncovered0"><a name="line47"></a>47         end
-</span><span class="uncovered1"><a name="line48"></a>48       end
-</span><span class="uncovered0"><a name="line49"></a>49     end
-</span><span class="uncovered1"><a name="line50"></a>50   end
-</span><span class="uncovered0"><a name="line51"></a>51 end
+</span><span class="inferred0"><a name="line23"></a>23 
+</span><span class="marked1"><a name="line24"></a>24           unless tagger.respond_to?(:tagger?) &amp;&amp; tagger.tagger? &amp;&amp; !tagger.is_a?(Class)
+</span><span class="uncovered0"><a name="line25"></a>25             raise Exception.new(&quot;#{tagger} is not a tagger datamapper resource object!&quot;)
+</span><span class="uncovered1"><a name="line26"></a>26           end
+</span><span class="inferred0"><a name="line27"></a>27           
+</span><span class="marked1"><a name="line28"></a>28           unless taggable.respond_to?(:taggable?) &amp;&amp; taggable.taggable? &amp;&amp; !taggable.is_a?(Class)
+</span><span class="uncovered0"><a name="line29"></a>29             raise Exception.new(&quot;#{taggable} is not a taggable datamapper resource object!&quot;)
+</span><span class="uncovered1"><a name="line30"></a>30           end
+</span><span class="inferred0"><a name="line31"></a>31                     
+</span><span class="marked1"><a name="line32"></a>32           tags = TagList.from(tags)
+</span><span class="inferred0"><a name="line33"></a>33           
+</span><span class="inferred1"><a name="line34"></a>34           # TODO: add checks to see if tags can be added
+</span><span class="inferred0"><a name="line35"></a>35           #raise Exception(&quot;Cannot Tag #{taggable.class}!&quot;) if !taggable.is_a?(Article) &amp;&amp; !taggable.is_a?(Picture)
+</span><span class="marked1"><a name="line36"></a>36           tagger_klass = tagger.class
+</span><span class="marked0"><a name="line37"></a>37           taggable_klass = taggable.class
+</span><span class="marked1"><a name="line38"></a>38           tagging_klass = tagging_class_of(tagger_klass, taggable_klass)
+</span><span class="marked0"><a name="line39"></a>39           tags.each do |tag|
+</span><span class="marked1"><a name="line40"></a>40             tag_obj = Tag.fetch(tag)
+</span><span class="marked0"><a name="line41"></a>41             tagging = tagging_klass.new(:tag =&gt; tag_obj)
+</span><span class="inferred1"><a name="line42"></a>42             
+</span><span class="marked0"><a name="line43"></a>43             [tagger, taggable].each{|obj| obj.tagging_association_of(tagger_klass, taggable_klass) &lt;&lt; tagging}
+</span><span class="marked1"><a name="line44"></a>44             success = tagging.save
+</span><span class="inferred0"><a name="line45"></a>45           end # end of each
+</span><span class="inferred1"><a name="line46"></a>46         end
+</span><span class="inferred0"><a name="line47"></a>47       end
+</span><span class="inferred1"><a name="line48"></a>48       
+</span><span class="marked0"><a name="line49"></a>49       module SharedInstanceMethods
+</span><span class="marked1"><a name="line50"></a>50         def tagging_association_of(tagger_klass, taggable_klass)
+</span><span class="marked0"><a name="line51"></a>51           self.send(self.class.tagging_association_of(tagger_klass, taggable_klass))
+</span><span class="marked1"><a name="line52"></a>52         end
+</span><span class="inferred0"><a name="line53"></a>53         
+</span><span class="marked1"><a name="line54"></a>54         def tag_association_of(tagger_klass, taggable_klass)
+</span><span class="uncovered0"><a name="line55"></a>55           self.send(self.class.tag_association_of(tagger_klass, taggable_klass))
+</span><span class="uncovered1"><a name="line56"></a>56         end
+</span><span class="uncovered0"><a name="line57"></a>57       end
+</span><span class="uncovered1"><a name="line58"></a>58     end
+</span><span class="uncovered0"><a name="line59"></a>59   end
+</span><span class="uncovered1"><a name="line60"></a>60 end
 </span></pre><hr/>
     <p>Generated using the <a href='http://eigenclass.org/hiki.rb?rcov'>rcov code coverage analysis tool for Ruby</a>
    version 0.8.1.2.</p>
