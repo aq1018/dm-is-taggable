@@ -8,56 +8,30 @@ module DataMapper
         extend  DataMapper::Is::Taggable::TaggableClassMethods
         include DataMapper::Is::Taggable::TaggableInstanceMethods
         
-
         @tagger_classes = options[:by]
+        has n, :taggings, :class_name => "Tagging", :child_key => [:taggable_id], :taggable_type => self.to_s
+        # real ugly syntax... wait until dm make better conditional has n :through association better, than update code
+        has n, :tags, :through => :taggings, :class_name => "Tag", :child_key => [:taggable_id], Tagging.properties[:taggable_type] => self.to_s, :unique => true
         
-        tagger_classes.each do |tagger_klass|
-          taggable_klass = self
-          tagging_association = tagging_association_of(tagger_klass, taggable_klass)
-          tag_association = tag_association_of(tagger_klass, taggable_klass)
-          tagging_class_name = tagging_class_name_of(tagger_klass, taggable_klass)
-          
-          # remix in the taggings association for each tagger and taggable
-          remix_opts = {
-            :as => tagging_association,
-            :for => tagger_klass,
-            :class_name => tagging_class_name,
-          }
-          remix n, :taggings, remix_opts
-          
-          enhance :taggings, tagging_class_name.intern do
-            belongs_to :tag
-            belongs_to taggable_klass.name.snake_case.intern
-            belongs_to tagger_klass.name.snake_case.intern
-          end
-          
-          through_association_name = tagging_association_of(tagger_klass, taggable_klass)
-          association_name = tag_association_of(tagger_klass, taggable_klass)
-          
-          # create a psudo-association for taggable
-          taggable_klass.class_eval(<<-EOS, __FILE__, __LINE__ + 1)
-            def #{tag_association}
-              self.send(:'#{tagging_association}').tag
-            end
-          EOS
-          
-          # create a psudo-association for tagger
-          tagger_klass.class_eval(<<-EOS, __FILE__, __LINE__ + 1)
-            def #{tag_association}
-              self.send(:'#{tagging_association}').tag
-            end
-          EOS
-          
-          # add the taggable class into tagger
-          tagger_klass.taggable_classes << taggable_klass
-
-          # create a has many association for tag
-          Tag.has n, tagging_association.intern, :class_name => tagging_class_name          
+        tagger_classes.each do |class_name|
+          has n, "taggings_by_#{class_name.snake_case.plural}".intern, 
+                  :class_name => "Tagging", :child_key => [:taggable_id], 
+                  :taggable_type => self.to_s, :tagger_type => class_name
+                  
+          has n, "tags_by_#{class_name.snake_case.plural}".intern, :through => :taggings, 
+                  :class_name => "Tag", :child_key => [:taggable_id], 
+                  Tagging.properties[:taggable_type] => self.to_s,
+                  Tagging.properties[:tagger_type] => class_name,
+                  :remote_name => "tag"
         end
+        
+        before :destroy, :destroy_all_taggings
       end
       
       module TaggableClassMethods
-        attr_reader :tagger_classes
+        def tagger_classes
+          @tagger_classes.map{|klass| klass.to_s.singular.camel_case}
+        end
         
         def tagger?;false;end
         def taggable?;true;end
@@ -106,40 +80,44 @@ module DataMapper
         end
         
         def with_all_tags(*params)
-          tagger_class, tags, options = extract_params_for_taggables(params)
-          tagger_class = tagger_class.class unless tagger_class.nil? || tagger_class.is_a?(Class)
-          
-          tag_table_name = Tag.storage_name
-          
-          if tagger_class
-            tagging_table_name = tagging_class_of(tagger_class, taggable_class).storage_name
+          tagger_obj_or_class, tag_list, options = extract_params_for_taggables(params)
 
-            conditions = ["
-              (SELECT COUNT(*) FROM #{tagging_table_name}
-               INNER JOIN #{tag_table_name} ON #{tagging_table_name}.tag_id = #{tag_table_name}.id
-               WHERE #{tagging_table_name}.#{Extlib::Inflection.foreign_key(taggable_class.name)} = #{storage_name}.id AND
-               #{tag_table_name}.name IN (#{tags.map{|t| '"' << t << '"'}.join(', ')})) = ?
-            ", tags.size ]
-            
-            all(self.send(tagging_association_of(tagger_class, taggable_class)).tag.name => tags.to_a, :conditions => conditions, :unique => true)
-          else
-            rv = tagger_classes.map{|tc| with_all_tags(tc, tags, options)}.flatten!
-            rv.uniq!
-            rv.nil? ? [] : rv
+          tagger_class, tagger_obj = if tagger_obj_or_class && tagger_obj_or_class.is_a?(Class)
+           [tagger_obj_or_class, nil]            
+          elsif tagger_obj_or_class && !tagger_obj_or_class.is_a?(Class)
+           [tagger_obj_or_class.class, tagger_obj_or_class]
           end
+          
+          conditions = "SELECT COUNT(DISTINCT(tag_id)) FROM taggings INNER JOIN tags ON taggings.tag_id = tags.id WHERE "
+          counter_conditions = [ 
+            "taggings.taggable_type = '#{self.to_s}'",
+            "taggings.taggable_id = #{storage_name}.id",
+            "tags.name IN (#{tag_list.map{|t| '"' << t << '"'}.join(', ')})"
+            ]
+          counter_conditions << "taggings.tagger_type = '#{tagger_class.to_s}'" if tagger_class
+          counter_conditions << "taggings.tagger_id = #{tagger_obj.id}" if tagger_obj       
+          conditions = "(" << conditions << counter_conditions.join(" AND ") << ") = ?"
+          conditions = [conditions, tag_list.size]          
+          with_any_tags(params).all(:conditions => conditions)
         end
         
         def with_any_tags(*params)
-          tagger_class, tags, options = extract_params_for_taggables(params)
-          tagger_class = tagger_class.class unless tagger_class.nil? || tagger_class.is_a?(Class)
+          tagger_obj_or_class, tag_list, options = extract_params_for_taggables(params)
           
-          if tagger_class
-            all(self.send(tagging_association_of(tagger_class, taggable_class)).tag.name => tags.to_a, :unique => true)
-          else
-            rv = tagger_classes.map{|tc| with_any_tags(tc, tags, options)}.flatten!
-            rv.uniq!
-            rv.nil? ? [] : rv
+          tagger_class, tagger_obj = if tagger_obj_or_class && tagger_obj_or_class.is_a?(Class)
+            [tagger_obj_or_class, nil]            
+          elsif tagger_obj_or_class && !tagger_obj_or_class.is_a?(Class)
+            [tagger_obj_or_class.class, tagger_obj_or_class]
           end
+          
+          query = {  self.tags.tag.name => tag_list.to_a,
+            Tagging.properties[:taggable_type] => self,
+            :unique => true
+          }
+          query.merge!(Tagging.properties[:tagger_type] => tagger_class) if tagger_class
+          query.merge!(Tagging.properties[:tagger_id] => tagger_obj.id) if tagger_obj
+            
+          all(query)            
         end
         
         def extract_params_for_taggables(params, options = {})
@@ -173,8 +151,13 @@ module DataMapper
           tagger, tags, options = self.class.extract_params_for_taggables(params)
           self.class.create_taggings(tagger, taggable, params)
         end
-      end # InstanceMethods
+        
+        protected
 
+        def destroy_all_taggings
+          self.taggings.destroy!
+        end
+      end # InstanceMethods
     end # Taggable
   end # Is
 end # DataMapper

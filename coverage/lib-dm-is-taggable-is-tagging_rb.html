@@ -553,7 +553,7 @@ span.run100 {
 </style>
     </head>
   <body><h3>C0 code coverage information</h3>
-    <p>Generated on Wed Sep 10 18:38:41 +0800 2008 with <a href='http://eigenclass.org/hiki/rcov'>rcov 0.8.1.2</a>
+    <p>Generated on Fri Sep 12 18:50:29 +0800 2008 with <a href='http://eigenclass.org/hiki/rcov'>rcov 0.8.1.2</a>
       </p>
     <hr/>
     <pre><span class='marked0'>Code reported as executed by Ruby looks like this...
@@ -571,9 +571,9 @@ span.run100 {
     </thead>
   <tbody><tr class='light'><td><a href='lib-dm-is-taggable-is-tagging_rb.html'>lib/dm-is-taggable/is/tagging.rb</a>
         </td>
-      <td class='lines_total'><tt>20</tt>
+      <td class='lines_total'><tt>28</tt>
         </td>
-      <td class='lines_code'><tt>17</tt>
+      <td class='lines_code'><tt>21</tt>
         </td>
       <td><table cellspacing='0' cellpadding='0' align='right'><tr><td><tt class='coverage_total'>100.0%</tt>
               &nbsp;</td>
@@ -605,19 +605,27 @@ span.run100 {
 </span><span class="marked1"><a name="line5"></a> 5       def is_tagging(options=nil)
 </span><span class="marked0"><a name="line6"></a> 6         extend  DataMapper::Is::Taggable::TaggingClassMethods
 </span><span class="marked1"><a name="line7"></a> 7         include DataMapper::Is::Taggable::TaggingInstanceMethods
-</span><span class="marked0"><a name="line8"></a> 8         is :remixable
+</span><span class="inferred0"><a name="line8"></a> 8 
 </span><span class="marked1"><a name="line9"></a> 9         property :id, DataMapper::Types::Serial
-</span><span class="marked0"><a name="line10"></a>10         property :tag_id, Integer
-</span><span class="inferred1"><a name="line11"></a>11       end
-</span><span class="inferred0"><a name="line12"></a>12       
-</span><span class="marked1"><a name="line13"></a>13       module TaggingClassMethods
-</span><span class="inferred0"><a name="line14"></a>14       end
-</span><span class="inferred1"><a name="line15"></a>15 
-</span><span class="marked0"><a name="line16"></a>16       module TaggingInstanceMethods
-</span><span class="inferred1"><a name="line17"></a>17       end
-</span><span class="inferred0"><a name="line18"></a>18     end
-</span><span class="inferred1"><a name="line19"></a>19   end
-</span><span class="inferred0"><a name="line20"></a>20 end
+</span><span class="marked0"><a name="line10"></a>10         property :tag_id, Integer,        :index =&gt; :true,      :nullable =&gt; false
+</span><span class="inferred1"><a name="line11"></a>11 
+</span><span class="marked0"><a name="line12"></a>12         property :tagger_id, Integer,     :index =&gt; :tagger,    :nullable =&gt; true
+</span><span class="marked1"><a name="line13"></a>13         property :tagger_type, String,    :index =&gt; :tagger,    :nullable =&gt; true,  :size =&gt; 255
+</span><span class="inferred0"><a name="line14"></a>14 
+</span><span class="marked1"><a name="line15"></a>15         property :taggable_id, Integer,   :index =&gt; :taggable,  :nullable =&gt; false
+</span><span class="marked0"><a name="line16"></a>16         property :taggable_type, String,  :index =&gt; :taggable,  :nullable =&gt; false, :size =&gt; 255
+</span><span class="inferred1"><a name="line17"></a>17         
+</span><span class="marked0"><a name="line18"></a>18         belongs_to :tag
+</span><span class="inferred1"><a name="line19"></a>19       end
+</span><span class="inferred0"><a name="line20"></a>20       
+</span><span class="marked1"><a name="line21"></a>21       module TaggingClassMethods
+</span><span class="inferred0"><a name="line22"></a>22       end
+</span><span class="inferred1"><a name="line23"></a>23 
+</span><span class="marked0"><a name="line24"></a>24       module TaggingInstanceMethods
+</span><span class="inferred1"><a name="line25"></a>25       end
+</span><span class="inferred0"><a name="line26"></a>26     end
+</span><span class="inferred1"><a name="line27"></a>27   end
+</span><span class="inferred0"><a name="line28"></a>28 end
 </span></pre><hr/>
     <p>Generated using the <a href='http://eigenclass.org/hiki.rb?rcov'>rcov code coverage analysis tool for Ruby</a>
    version 0.8.1.2.</p>

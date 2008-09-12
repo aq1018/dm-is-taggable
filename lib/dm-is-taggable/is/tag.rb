@@ -12,7 +12,9 @@ module DataMapper
       
       module TagClassMethods
         attr_reader :tagger
-
+        #TODO: check if there is any concurrency problem here
+        # NOT thread safe right now!!
+        # need to make it safer!!
         def as(tagger_or_tagger_class, &block)
           self.tagger = tagger_or_tagger_class
           raise Exception("A block must be provided!") unless block_given?
@@ -42,6 +44,10 @@ module DataMapper
       end # ClassMethods
 
       module TagInstanceMethods
+        def to_s
+          self.name
+        end
+        
         def related_tags(tag)
         end
         

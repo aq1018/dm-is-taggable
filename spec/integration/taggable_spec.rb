@@ -11,6 +11,7 @@ require Pathname(__FILE__).dirname.expand_path.parent / 'data' / 'user'
 require Pathname(__FILE__).dirname.expand_path.parent / 'data' / 'picture'
 require Pathname(__FILE__).dirname.expand_path.parent / 'data' / 'article'
 
+#DataObjects::Sqlite3.logger = DataObjects::Logger.new(STDOUT, 0)
 DataMapper.auto_migrate!
 
 if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
@@ -39,7 +40,7 @@ if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
       User.respond_to?(:taggable_classes).should be_true
     end
 
-    it "should be able to tag" do
+    it "should be able to tag by taggers" do
       picture = Picture.new
       user = User.new(:name => "me")
       user.save.should == true
@@ -48,9 +49,88 @@ if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
       picture.tag_with(user, "tagme", "tagtag", "tagtagtag")
       user.tag_with(picture, "tag3", "tag4", "tag5")
       
+      picture.taggings.count.should == 6
+      picture.tags.count.should == 6
+      
       user.destroy
       picture.destroy
     end
+    
+    it "should be able to tag anonymously" do
+      picture = Picture.new
+      picture.save.should == true
+      
+      picture.tag_with("tagme", "tagtag", "tagtagtag")
+      picture.tags.count.should == 3
+      
+      picture.tags.include?(Tag.get("tagme")).should be_true
+      picture.tags.include?(Tag.get("tagtag")).should be_true
+      picture.tags.include?(Tag.get("tagtagtag")).should be_true
+      
+      picture.taggings.each do |tag|
+        tag.tagger_type.should be_nil
+        tag.tagger_id.should be_nil
+      end
+      
+      picture.destroy
+    end
+    
+    it "should be able to retrieve Pciture by with_any_tags" do
+      Picture.with_any_tags("tag2", "tag5").count.should == 2
+      Picture.with_any_tags("tag2", "tag5").include?(@picture1).should be_true
+      Picture.with_any_tags("tag2", "tag5").include?(@picture2).should be_true
+
+      Picture.with_any_tags(User, "tag2", "tag5").count.should == 2
+      Picture.with_any_tags(User, "tag2", "tag5").include?(@picture1).should be_true
+      Picture.with_any_tags(User, "tag2", "tag5").include?(@picture2).should be_true
+      
+      Picture.with_any_tags(Bot, "tag_by_bot", "tag5").count.should == 1
+      Picture.with_any_tags(Bot, "tag_by_bot", "tag5").include?(@picture1).should be_true
+    end
+    
+    it "should be able to retrieve Pciture by with_all_tags" do
+      Picture.with_all_tags("tag1").size.should == 2
+      Picture.with_all_tags("tag1").include?(@picture1).should be_true
+      Picture.with_all_tags("tag1").include?(@picture2).should be_true
+      
+      Picture.with_all_tags(User, "tag1").size.should == 2
+      Picture.with_all_tags(User, "tag1").include?(@picture1).should be_true
+      Picture.with_all_tags(User, "tag1").include?(@picture2).should be_true
+      
+      Picture.with_all_tags(Bot, "tag1").size.should == 1
+      Picture.with_all_tags(Bot, "tag1").include?(@picture1).should be_true
+      
+      Picture.with_all_tags("tag2").should == [@picture1]
+      
+      Picture.with_all_tags("tag1", "tag2").should == [@picture1]
+      Picture.with_all_tags("non existing tag").should == []
+    end
+    
+    
+    it "should be able to retrieve all tags" do
+      puts "!!!!!!!!!!!!!!!!#{@picture1.tags}"
+      # ALL taggers
+      all_tags = @picture1.tags
+      all_tags.size.should == 4
+      all_tags.include?(Tag.get("tag1")).should be_true
+      all_tags.include?(Tag.get("tag2")).should be_true
+      all_tags.include?(Tag.get("tag3")).should be_true
+      all_tags.include?(Tag.get("tag_by_bot")).should be_true
+      
+      # Users
+      all_tags = @picture1.tags_by_users
+      all_tags.size.should == 3
+      all_tags.include?(Tag.get("tag1")).should be_true
+      all_tags.include?(Tag.get("tag2")).should be_true
+      all_tags.include?(Tag.get("tag3")).should be_true
+      
+      # Bots
+      all_tags = @picture1.tags_by_bots
+      all_tags.size.should == 3
+      all_tags.include?(Tag.get("tag1")).should be_true
+      all_tags.include?(Tag.get("tag3")).should be_true
+      all_tags.include?(Tag.get("tag_by_bot")).should be_true
+     end
     
     it "should handle scoped tag creation" do
       picture = Picture.new
@@ -68,51 +148,12 @@ if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
       picture.destroy      
     end
     
-   it "should be able to retrieve all tags" do
-      all_tags = @picture1.picture_user_tags 
-      all_tags.size.should == 3
-      all_tags.include?(Tag.get("tag1")).should be_true
-      all_tags.include?(Tag.get("tag2")).should be_true
-      all_tags.include?(Tag.get("tag3")).should be_true
-      
-      all_tags = @picture1.picture_bot_tags
-      all_tags.size.should == 3
-      all_tags.include?(Tag.get("tag1")).should be_true
-      all_tags.include?(Tag.get("tag3")).should be_true
-      all_tags.include?(Tag.get("tag_by_bot")).should be_true
-    end
+
 
     
-    it "should be able to retrieve Pciture by with_all_tags" do
-      Picture.with_all_tags("tag1").size.should == 2
-      Picture.with_all_tags("tag1").include?(@picture1).should be_true
-      Picture.with_all_tags("tag1").include?(@picture2).should be_true
-      
-      Picture.with_all_tags(User, "tag1").size.should == 2
-      Picture.with_all_tags(User, "tag1").include?(@picture1).should be_true
-      Picture.with_all_tags(User, "tag1").include?(@picture2).should be_true
 
-      Picture.with_all_tags(Bot, "tag1").size.should == 1
-      Picture.with_all_tags(Bot, "tag1").include?(@picture1).should be_true
-      
-      Picture.with_all_tags("tag2").should == [@picture1]
-      
-      Picture.with_all_tags("tag1", "tag2").should == [@picture1]
-      Picture.with_all_tags("non existing tag").should == []
-    end
     
-    it "should be able to retrieve Pciture by with_any_tags" do
-      Picture.with_any_tags("tag2", "tag5").size.should == 2
-      Picture.with_any_tags("tag2", "tag5").include?(@picture1).should be_true
-      Picture.with_any_tags("tag2", "tag5").include?(@picture2).should be_true
-      
-      Picture.with_any_tags(User, "tag2", "tag5").size.should == 2
-      Picture.with_any_tags(User, "tag2", "tag5").include?(@picture1).should be_true
-      Picture.with_any_tags(User, "tag2", "tag5").include?(@picture2).should be_true
-      
-      Picture.with_any_tags(Bot, "tag_by_bot", "tag5").size.should == 1
-      Picture.with_any_tags(Bot, "tag_by_bot", "tag5").include?(@picture1).should be_true
-    end
+
     
     it "should handle scoped tag retrieval" do
       Tag.as(Bot) do
@@ -122,8 +163,6 @@ if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
 
       Tag.as(User) do
         Picture.with_any_tags("tag_by_bot").should be_empty
-        
-        puts "=====================#{Picture.with_all_tags("tag1, tag2, tag3").inspect}"
         Picture.with_all_tags("tag1, tag2, tag3").size.should == 1
         Picture.with_all_tags("tag1, tag2, tag3").include?(@picture1).should be_true
         
@@ -138,7 +177,9 @@ if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
     
     it "should be able to retrieve picture tags count" do
       #this requires a dm-aggration
-      @picture1.picture_user_tags.count.should == 3
+      @picture1.tags_by_users.size.should == 3
+      @picture1.tags_by_bots.size.should == 3
+      @picture1.tags.size.should == 4
     end
     
     # it "should be able to retrieve amount of times tag has been used" do
