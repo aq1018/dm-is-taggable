@@ -24,15 +24,16 @@ if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
       @bot2 = Bot.create(:name => "bot2")
       
       @picture1 = Picture.create
-      @picture1.tag_with(@user1, "tag1, tag2, tag3")
+      @picture1.tag(:by =>@user1, :with => "tag1, tag2, tag3")
+      @picture1.tag(:by => @user2, :with => "tag10, tag2, tag3")
 
       @picture2 = Picture.create
-      @user2.tag_with(@picture2, "tag1", "tag4", "tag5")
+      @user2.tag(:on=>@picture2,  :with => ["tag1", "tag4", "tag5"])
       
-      @picture1.tag_with(@bot1, "tag1, tag3, tag_by_bot")
+      @picture1.tag(:by => @bot1, :with => ["tag1, tag3, tag_by_bot"])
 
       @article = Article.create
-      @article.tag_with(@user1, "tag1", "tag4", "tag5")
+      @article.tag(:by =>@user1, :with => ["tag1", "tag4", "tag5"])
     end
     
     it "should setup to tagger_classes and taggable_classes accessors for taggables and taggers" do
@@ -46,8 +47,8 @@ if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
       user.save.should == true
       picture.save.should == true
       
-      picture.tag_with(user, "tagme", "tagtag", "tagtagtag")
-      user.tag_with(picture, "tag3", "tag4", "tag5")
+      picture.tag(:by => user, :with =>["tagme", "tagtag", "tagtagtag"])
+      user.tag(:on =>picture, :with => ["tag3", "tag4", "tag5"])
       
       picture.taggings.count.should == 6
       picture.tags.count.should == 6
@@ -60,7 +61,7 @@ if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
       picture = Picture.new
       picture.save.should == true
       
-      picture.tag_with("tagme", "tagtag", "tagtagtag")
+      picture.tag(:with => ["tagme", "tagtag", "tagtagtag"])
       picture.tags.count.should == 3
       
       picture.tags.include?(Tag.get("tagme")).should be_true
@@ -76,53 +77,53 @@ if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
     end
     
     it "should be able to retrieve Pciture by with_any_tags" do
-      Picture.with_any_tags("tag2", "tag5").count.should == 2
-      Picture.with_any_tags("tag2", "tag5").include?(@picture1).should be_true
-      Picture.with_any_tags("tag2", "tag5").include?(@picture2).should be_true
+      Picture.find( :match => :any ,:with => ["tag2", "tag5"]).size.should == 2
+      Picture.find( :match => :any ,:with => ["tag2", "tag5"]).include?(@picture1).should be_true
+      Picture.find( :match => :any ,:with => ["tag2", "tag5"]).include?(@picture2).should be_true
 
-      Picture.with_any_tags(User, "tag2", "tag5").count.should == 2
-      Picture.with_any_tags(User, "tag2", "tag5").include?(@picture1).should be_true
-      Picture.with_any_tags(User, "tag2", "tag5").include?(@picture2).should be_true
+      Picture.find( :match => :any ,:by => User, :with => ["tag2", "tag5"]).size.should == 2
+      Picture.find( :match => :any ,:by => User, :with => ["tag2", "tag5"]).include?(@picture1).should be_true
+      Picture.find( :match => :any ,:by => User, :with => [ "tag2", "tag5"]).include?(@picture2).should be_true
       
-      Picture.with_any_tags(Bot, "tag_by_bot", "tag5").count.should == 1
-      Picture.with_any_tags(Bot, "tag_by_bot", "tag5").include?(@picture1).should be_true
+      Picture.find( :match => :any ,:by => Bot, :with => ["tag_by_bot", "tag5"]).size.should == 1
+      Picture.find( :match => :any ,:by => Bot, :with => ["tag_by_bot", "tag5"]).include?(@picture1).should be_true
     end
     
-    it "should be able to retrieve Pciture by with_all_tags" do
-      Picture.with_all_tags("tag1").size.should == 2
-      Picture.with_all_tags("tag1").include?(@picture1).should be_true
-      Picture.with_all_tags("tag1").include?(@picture2).should be_true
+    it "should be able to retrieve Pciture by find" do
+      Picture.find(:with =>"tag1").size.should == 2
+      Picture.find(:with =>"tag1").include?(@picture1).should be_true
+      Picture.find(:with =>"tag1").include?(@picture2).should be_true
       
-      Picture.with_all_tags(User, "tag1").size.should == 2
-      Picture.with_all_tags(User, "tag1").include?(@picture1).should be_true
-      Picture.with_all_tags(User, "tag1").include?(@picture2).should be_true
+      Picture.find(:by =>User, :with =>"tag1").size.should == 2
+      Picture.find(:by =>User,:with => "tag1").include?(@picture1).should be_true
+      Picture.find(:by =>User, :with =>"tag1").include?(@picture2).should be_true
       
-      Picture.with_all_tags(Bot, "tag1").size.should == 1
-      Picture.with_all_tags(Bot, "tag1").include?(@picture1).should be_true
+      Picture.find(:by =>Bot,:with => "tag1").size.should == 1
+      Picture.find(:by =>Bot, :with =>"tag1").include?(@picture1).should be_true
+
+      Picture.find(:with =>"tag2").should == [@picture1]
       
-      Picture.with_all_tags("tag2").should == [@picture1]
-      
-      Picture.with_all_tags("tag1", "tag2").should == [@picture1]
-      Picture.with_all_tags("non existing tag").should == []
+      Picture.find(:with =>["tag1", "tag2"]).should == [@picture1]
+      Picture.find(:with =>"non existing tag").should == []
     end
     
     
     it "should be able to retrieve all tags" do
-      puts "!!!!!!!!!!!!!!!!#{@picture1.tags}"
       # ALL taggers
       all_tags = @picture1.tags
-      all_tags.size.should == 4
+      all_tags.size.should == 5
       all_tags.include?(Tag.get("tag1")).should be_true
       all_tags.include?(Tag.get("tag2")).should be_true
       all_tags.include?(Tag.get("tag3")).should be_true
       all_tags.include?(Tag.get("tag_by_bot")).should be_true
-      
+      all_tags.include?(Tag.get("tag10")).should be_true
       # Users
       all_tags = @picture1.tags_by_users
-      all_tags.size.should == 3
+      all_tags.size.should == 4
       all_tags.include?(Tag.get("tag1")).should be_true
       all_tags.include?(Tag.get("tag2")).should be_true
       all_tags.include?(Tag.get("tag3")).should be_true
+      all_tags.include?(Tag.get("tag10")).should be_true
       
       # Bots
       all_tags = @picture1.tags_by_bots
@@ -139,66 +140,111 @@ if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
       picture.save.should == true
   
       Tag.as(user) do
-        picture.tag_with("scoped_tag")
+        picture.tag(:with => "scoped_tag")
       end
-      Picture.with_all_tags("scoped_tag").size.should == 1
-      Picture.with_all_tags("scoped_tag").include?(picture).should be_true
+      Picture.find(:with => "scoped_tag").size.should == 1
+      Picture.find("scoped_tag").include?(picture).should be_true
       
       user.destroy
       picture.destroy      
     end
     
-
-
-    
-
-    
-
-    
     it "should handle scoped tag retrieval" do
       Tag.as(Bot) do
-        Picture.with_any_tags("tag_by_bot").size.should == 1
-        Picture.with_any_tags("tag_by_bot").include?(@picture1).should be_true
+        Picture.find( :match => :any , :with => "tag_by_bot").size.should == 1
+        Picture.find( :match => :any ,:with => "tag_by_bot").include?(@picture1).should be_true
       end
 
       Tag.as(User) do
-        Picture.with_any_tags("tag_by_bot").should be_empty
-        Picture.with_all_tags("tag1, tag2, tag3").size.should == 1
-        Picture.with_all_tags("tag1, tag2, tag3").include?(@picture1).should be_true
+        Picture.find( :match => :any , :with => "tag_by_bot").should be_empty
+        Picture.find("tag1, tag2, tag3").size.should == 1
+        Picture.find("tag1, tag2, tag3").include?(@picture1).should be_true
         
-        Picture.with_any_tags("tag1").size.should == 2
-        Picture.with_all_tags("tag1").include?(@picture1).should be_true
-        Picture.with_all_tags("tag1").include?(@picture2).should be_true
+        Picture.find( :match => :any ,:with => "tag1").size.should == 2
+        Picture.find("tag1").include?(@picture1).should be_true
+        Picture.find("tag1").include?(@picture2).should be_true
       end
-      
     end
-    
-
     
     it "should be able to retrieve picture tags count" do
-      #this requires a dm-aggration
-      @picture1.tags_by_users.size.should == 3
-      @picture1.tags_by_bots.size.should == 3
-      @picture1.tags.size.should == 4
+      # This requires a dm-aggration and the patch that enables unique count
+      # Note: @picture1.tags_by_users.size also works, but less optimized. this uses COUNT in sql
+      @picture1.count_tags_by_users.should == 4
+      @picture1.count_tags_by_bots.should == 3
+      @picture1.count_tags.should == 5
     end
     
-    # it "should be able to retrieve amount of times tag has been used" do
-    #   Tag.get("tag1").tagged_count.should == 2
-    # end
-    
-    # it "should be able to retrieve related tags that where used in the same set" do
-    #   related_tags = Tag.get("tag3").related_tags
-    #   related_tags.size.should == 2
-    #   related_tags.include?(Tag.get("tag1")).should be_true
-    #   related_tags.include?(Tag.get("tag2")).should be_true
-    #   
-    #   related_tags = Tag.get("tag1").related_tags
-    #   related_tags.size.should == 4
-    #   related_tags.include?(Tag.get("tag2")).should be_true
-    #   related_tags.include?(Tag.get("tag3")).should be_true
-    #   related_tags.include?(Tag.get("tag4")).should be_true
-    #   related_tags.include?(Tag.get("tag5")).should be_true
-    # end
+     it "should be able to retrieve amount of times tag has been used" do
+       # picture1 picture2 article1
+       Tag.get("tag1").tagged_count.should == 3
+       # picture1 picture2 article1
+       Tag.get("tag1").tagged_count(:by => "User").should == 3
+       # picture1
+       Tag.get("tag1").tagged_count(:by => Bot).should == 1
+       # article1 and picture1
+       Tag.get("tag1").tagged_count(:by => @user1).should == 2
+       
+      Tag.get("tag1").tagged_count(:by =>@user1, :on => Picture) == 1
+     end
+     
+     it "should be able to retrieve tags by the specified relation object" do
+       Tag.by(@user1).sort.should == [Tag.get("tag1"), Tag.get("tag2"), Tag.get("tag3"), Tag.get("tag4"), Tag.get("tag5")].sort
+       Tag.by(User).sort.should == [Tag.get("tag1"), Tag.get("tag2"), Tag.get("tag3"), Tag.get("tag4"), Tag.get("tag5"), Tag.get("tag10")].sort
+       Tag.on(@article).sort.should == [Tag.get("tag1"), Tag.get("tag4"), Tag.get("tag5")].sort
+       Tag.on(@picture1).by(@user2).sort.should == [Tag.get("tag2"), Tag.get("tag3"), Tag.get("tag10")].sort
+     end
+          
+     it "should be able to retrieve specified tags by the specified relation object" do
+       Picture.find(:with =>"tag1", :by => @user1).should == [@picture1]
+       Picture.find(:with =>"tag2", :by => @user2).should == [@picture1]
+       Picture.find(:with => ["tag1", "tag2"], :by => @bot1, :match => :any).should == [@picture1]
+     end
+
+    it "should be able to retrieve all tags by the user" do
+       @user1.tags.size.should == 5
+       @user1.tags.include?(Tag.get("tag1")).should be_true
+       @user1.tags.include?(Tag.get("tag2")).should be_true
+       @user1.tags.include?(Tag.get("tag3")).should be_true
+       @user1.tags.include?(Tag.get("tag4")).should be_true
+       @user1.tags.include?(Tag.get("tag5")).should be_true
+     end
+
+    it "should be able to retrieve all objects tagged by the user" do
+       @user1.find_taggables(:with =>["tag1", "tag4"], :match => :any).should == [@article, @picture1]
+       @user1.find_taggables(:with =>["tag1", "tag4"], :match => :all).should == [ @article]
+     end
+          
+     it "should be able to retrieve all objects tagged with certain tag" do
+       Tag.find_taggables(:with => ["tag1", "tag4"]).should == [@article, @picture2]
+       Tag.find_taggables(:with => ["tag1", "tag4"], :match => :any).should == [@article, @picture1, @picture2]
+     end
+     
+     it "should be able to retrieve taggable_objects of user with specified tags" do
+       @user2.find_taggables(:with => "tag1").should == [@picture2]
+     end
+     
+     it "should be able to retrieve how many times the user used the tag" do
+       Tag.tagged_count(:by => @user1, :on => @article, :with => "tag1").should == 1
+       Tag.tagged_count(:by => Bot,  :with => "tag1").should == 1
+       Tag.tagged_count(:by => @user1,  :with => "tag1").should == 2
+       Tag.tagged_count(:by => @user1).should == 2
+       Tag.tagged_count(:by => User).should == 3
+       Tag.tagged_count.should == 3
+     end
+         
+#     it "should be able to retrieve related tags that where used in the same set" do
+#       related_tags = Tag.get("tag3").related_tags
+#       related_tags.size.should == 2
+#       related_tags.include?(Tag.get("tag1")).should be_true
+#       related_tags.include?(Tag.get("tag2")).should be_true
+#       
+#       related_tags = Tag.get("tag1").related_tags
+#       related_tags.size.should == 4
+#       related_tags.include?(Tag.get("tag2")).should be_true
+#       related_tags.include?(Tag.get("tag3")).should be_true
+#       related_tags.include?(Tag.get("tag4")).should be_true
+#       related_tags.include?(Tag.get("tag5")).should be_true
+#     end
     # 
     # it "should be able to retrieve the times that tags where used in the same set" do
     #   pending
@@ -212,44 +258,6 @@ if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
     #   # Tag.get("tag1").popular_by_tags.should == [@aaron] # should return array and calculate this based upon the usage of the tag
     # end
     # 
-    # it "should be able to retrieve tags by the specified relation object" do
-    #   Tag.all_by(@aaron).should == [Tag.get("tag1"), Tag.get("tag2"), Tag.get("tag3"), Tag.get("tag4"), Tag.get("tag5")]
-    # end
-    # 
-    # it "should be able to retrieve specified tags by the specified relation object" do
-    #   TaggableObject.with_all_tags_and_by("tag1", @aaron).should == [TaggableObject.get(1), TaggableObject.get(2)]
-    #   TaggableObject.with_all_tags_and_by("tag2", @maxime).should == []
-    #   TaggableObject.with_any_tags_and_by("tag1", "tag2", @maxime).should == []
-    # end
-    # 
-    # it "should be able to retrieve taggable_objects of user with specified tags" do
-    #   pending
-    #   # shouldn't this one also include the SuperTaggableObject?
-    #   # @aaron.taggable_objects.with_all_tags("tag1").should == [TaggableObject.get(1), TaggableObject.get(2)]
-    # end
-    # 
-    # it "should be able to retrieve all tags by the user" do
-    #   @aaron.tags.all.size.should == 5
-    #   @aaron.tags.include?(Tag.get("tag1")).should be_true
-    #   @aaron.tags.include?(Tag.get("tag2")).should be_true
-    #   @aaron.tags.include?(Tag.get("tag3")).should be_true
-    #   @aaron.tags.include?(Tag.get("tag4")).should be_true
-    #   @aaron.tags.include?(Tag.get("tag5")).should be_true
-    # end
-    # 
-    # it "should be able to retrieve how many times the user used the tag" do
-    #   pending
-    #   # shouldn't this return 3 (including the SuperTaggableObject)?
-    #   # @aaron.tags.first.tagged_by_count.should == 2 # tags.first returns Tag.get("tag1")
-    # end
-    # 
-    # it "should be able to retrieve all objects tagged with certain tag" do
-    #   Tag.all_tagged_with("tag1", "tag4").should == [TaggableObject.get(2), SuperTaggableObject.get(1)]
-    # end
-    # 
-    # it "should be able to retrieve all objects tagged by the user" do
-    #   @aaron.all_tagged_with("tag1", "tag4").should == [TaggableObject.get(2), SuperTaggableObject.get(1)]
-    # end
     # 
     # it "should be able to retrieve similar users with same kind of tagging behavior sorted on similarity" do
     #   User.all_similar_by_tags.should == [@maxime]

@@ -4,14 +4,13 @@ require 'pathname'
 
 # Add all external dependencies for the plugin here
 gem 'dm-core', '=0.9.6'
-gem 'dm-is-remixable', '>=0.9.6'
 gem 'dm-aggregates', '>=0.9.6'
 require 'dm-core'
-require 'dm-is-remixable'
 require 'dm-aggregates'
 
 # Require plugin-files
 require Pathname(__FILE__).dirname.expand_path / 'dm-is-taggable' / 'tag_list.rb'
+require Pathname(__FILE__).dirname.expand_path / 'dm-is-taggable' / 'aggregate_patch.rb'
 require Pathname(__FILE__).dirname.expand_path / 'dm-is-taggable' / 'is' / 'shared.rb'
 require Pathname(__FILE__).dirname.expand_path / 'dm-is-taggable' / 'is' / 'taggable.rb'
 require Pathname(__FILE__).dirname.expand_path / 'dm-is-taggable' / 'is' / 'tag.rb'

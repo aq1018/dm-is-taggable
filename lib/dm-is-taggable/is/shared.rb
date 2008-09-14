@@ -2,6 +2,67 @@ module DataMapper
   module Is
     module Taggable
       module SharedClassMethods
+        
+        def extract_class_object(obj)
+          return [] if obj.nil?
+          if obj.is_a?(Class)
+            [obj, nil]            
+          else
+            [obj.class, obj]
+          end
+        end
+        
+        def by(tagger_class_or_obj)
+          tagger_class, tagger_obj = extract_tagger_class_object(tagger_class_or_obj)
+          query = {:unique => true}
+          query.merge!(Tag.taggings.tagger_type => tagger_class.to_s) if tagger_class
+          query.merge!(Tag.taggings.tagger_id => tagger_obj.id) if tagger_obj
+          all(query)
+        end
+
+        def on(taggable_class_or_obj)
+          taggable_class, taggable_obj = extract_taggable_class_object(taggable_class_or_obj)
+          query = {:unique => true}
+          query.merge!(Tag.taggings.taggable_type => taggable_class.to_s) if taggable_class
+          query.merge!(Tag.taggings.taggable_id => taggable_obj.id) if taggable_obj
+          all(query)
+        end
+        
+       def extract_options(options)
+         if options.is_a?(Array) || options.is_a?(String)
+           options = {:with => TagList.from(options)}
+         end
+         options = options.dup
+         
+         tagger = options.delete(:by)
+         tagger ||= Tag.tagger
+         taggable = options.delete(:on)
+         tags = TagList.from(options.delete(:with))
+         return [tagger, taggable, tags, options]
+       end
+        
+       def extract_tagger_class_object(obj)
+         obj = Extlib::Inflection.constantize(obj.to_s.camel_case.singular) if  obj && (obj.is_a?(String) || obj.is_a?(Symbol))
+         return [] if obj.nil?
+         
+         if obj.tagger?
+           extract_class_object(obj)
+         else
+            raise Exception.new("#{obj} is not a Tagger class or object!")
+         end
+       end
+        
+       def extract_taggable_class_object(obj)
+         obj = Extlib::Inflection.constantize(obj.to_s.camel_case.singular) if  obj && (obj.is_a?(String) || obj.is_a?(Symbol))
+         return [] if obj.nil?
+         
+         if obj.taggable?
+           extract_class_object(obj)
+         else
+           raise Exception.new("#{obj} is not a Taggable class or object!")
+         end
+       end
+                
         def create_taggings(tagger, taggable, tags=nil)
           return if tags.nil? || tags.empty?
           
@@ -29,18 +90,20 @@ module DataMapper
             next if tagging_obj
             
             # tagging is not in db, let's create one            
-            tagging = Tagging.create(tagging_hash)
+            Tagging.create(tagging_hash)
           end # end of each
         end
       end
       
       module SharedInstanceMethods
-        def tagging_association_of(tagger_klass, taggable_klass)
-          self.send(self.class.tagging_association_of(tagger_klass, taggable_klass))
+        def  extract_tagger_class_object(tagger_class_or_object)
+          self.class.extract_tagger_class_object(tagger_class_or_object)
         end
-        
-        def tag_association_of(tagger_klass, taggable_klass)
-          self.send(self.class.tag_association_of(tagger_klass, taggable_klass))
+        def  extract_taggable_class_object(taggable_class_or_object)
+          self.class.extract_taggable_class_object(taggable_class_or_object)
+        end
+        def extract_options(options)
+          self.class.extract_options(options)
         end
       end
     end

@@ -553,7 +553,7 @@ span.run100 {
 </style>
     </head>
   <body><h3>C0 code coverage information</h3>
-    <p>Generated on Fri Sep 12 18:50:29 +0800 2008 with <a href='http://eigenclass.org/hiki/rcov'>rcov 0.8.1.2</a>
+    <p>Generated on Sun Sep 14 04:01:05 -0700 2008 with <a href='http://eigenclass.org/hiki/rcov'>rcov 0.8.1.2</a>
       </p>
     <hr/>
     <pre><span class='marked0'>Code reported as executed by Ruby looks like this...
@@ -571,11 +571,11 @@ span.run100 {
     </thead>
   <tbody><tr class='light'><td><a href='lib-dm-is-taggable-is-tag_rb.html'>lib/dm-is-taggable/is/tag.rb</a>
         </td>
-      <td class='lines_total'><tt>66</tt>
+      <td class='lines_total'><tt>147</tt>
         </td>
-      <td class='lines_code'><tt>50</tt>
+      <td class='lines_code'><tt>110</tt>
         </td>
-      <td><table cellspacing='0' cellpadding='0' align='right'><tr><td><tt class='coverage_total'>97.0%</tt>
+      <td><table cellspacing='0' cellpadding='0' align='right'><tr><td><tt class='coverage_total'>97.3%</tt>
               &nbsp;</td>
             <td><table cellspacing='0' class='percent_graph' cellpadding='0' width='100'><tr><td class='covered' width='97'/>
                   <td class='uncovered' width='3'/>
@@ -585,7 +585,7 @@ span.run100 {
             </tr>
           </table>
         </td>
-      <td><table cellspacing='0' cellpadding='0' align='right'><tr><td><tt class='coverage_code'>96.0%</tt>
+      <td><table cellspacing='0' cellpadding='0' align='right'><tr><td><tt class='coverage_code'>96.4%</tt>
               &nbsp;</td>
             <td><table cellspacing='0' class='percent_graph' cellpadding='0' width='100'><tr><td class='covered' width='96'/>
                   <td class='uncovered' width='4'/>
@@ -598,72 +598,153 @@ span.run100 {
       </tr>
     </tbody>
   </table>
-<pre><span class="marked1"><a name="line1"></a> 1 module DataMapper
-</span><span class="marked0"><a name="line2"></a> 2   module Is
-</span><span class="marked1"><a name="line3"></a> 3     module Taggable
-</span><span class="inferred0"><a name="line4"></a> 4       
-</span><span class="marked1"><a name="line5"></a> 5       def is_tag(options=nil)
-</span><span class="marked0"><a name="line6"></a> 6         extend  DataMapper::Is::Taggable::TagClassMethods
-</span><span class="marked1"><a name="line7"></a> 7         include DataMapper::Is::Taggable::TagInstanceMethods
-</span><span class="marked0"><a name="line8"></a> 8         property :id, DataMapper::Types::Serial
-</span><span class="marked1"><a name="line9"></a> 9         property :name, String, :length =&gt; 255, :unique =&gt; true, :nullable =&gt; false
-</span><span class="marked0"><a name="line10"></a>10         has n, :taggings
-</span><span class="inferred1"><a name="line11"></a>11       end
-</span><span class="inferred0"><a name="line12"></a>12       
-</span><span class="marked1"><a name="line13"></a>13       module TagClassMethods
-</span><span class="marked0"><a name="line14"></a>14         attr_reader :tagger
-</span><span class="inferred1"><a name="line15"></a>15         #TODO: check if there is any concurrency problem here
-</span><span class="inferred0"><a name="line16"></a>16         # NOT thread safe right now!!
-</span><span class="inferred1"><a name="line17"></a>17         # need to make it safer!!
-</span><span class="marked0"><a name="line18"></a>18         def as(tagger_or_tagger_class, &amp;block)
-</span><span class="marked1"><a name="line19"></a>19           self.tagger = tagger_or_tagger_class
-</span><span class="marked0"><a name="line20"></a>20           raise Exception(&quot;A block must be provided!&quot;) unless block_given?
-</span><span class="marked1"><a name="line21"></a>21           yield
-</span><span class="marked0"><a name="line22"></a>22           self.tagger=nil
-</span><span class="inferred1"><a name="line23"></a>23         end
-</span><span class="inferred0"><a name="line24"></a>24         
-</span><span class="marked1"><a name="line25"></a>25         def all_by(tagger)
-</span><span class="inferred0"><a name="line26"></a>26           
-</span><span class="inferred1"><a name="line27"></a>27         end
-</span><span class="inferred0"><a name="line28"></a>28         
-</span><span class="marked1"><a name="line29"></a>29         def fetch(name)
-</span><span class="marked0"><a name="line30"></a>30           first(:name =&gt; name) || create(:name =&gt; name)
-</span><span class="marked1"><a name="line31"></a>31         end
-</span><span class="inferred0"><a name="line32"></a>32         
-</span><span class="marked1"><a name="line33"></a>33         def get(name)
-</span><span class="marked0"><a name="line34"></a>34           first(:name =&gt; name)
-</span><span class="marked1"><a name="line35"></a>35         end
-</span><span class="inferred0"><a name="line36"></a>36         
-</span><span class="marked1"><a name="line37"></a>37         private        
-</span><span class="marked0"><a name="line38"></a>38         def tagger=(tagger)
-</span><span class="marked1"><a name="line39"></a>39           unless (tagger.respond_to?(:tagger?) &amp;&amp; tagger.tagger?) || tagger.nil?
-</span><span class="uncovered0"><a name="line40"></a>40             raise Exception.new(&quot;#{tagger} is not a tagger datamapper resource object!&quot;)
-</span><span class="uncovered1"><a name="line41"></a>41           end
-</span><span class="marked0"><a name="line42"></a>42           @tagger = tagger
-</span><span class="inferred1"><a name="line43"></a>43         end
-</span><span class="inferred0"><a name="line44"></a>44       end # ClassMethods
-</span><span class="inferred1"><a name="line45"></a>45 
-</span><span class="marked0"><a name="line46"></a>46       module TagInstanceMethods
-</span><span class="marked1"><a name="line47"></a>47         def to_s
-</span><span class="marked0"><a name="line48"></a>48           self.name
-</span><span class="marked1"><a name="line49"></a>49         end
-</span><span class="inferred0"><a name="line50"></a>50         
-</span><span class="marked1"><a name="line51"></a>51         def related_tags(tag)
-</span><span class="inferred0"><a name="line52"></a>52         end
-</span><span class="inferred1"><a name="line53"></a>53         
-</span><span class="marked0"><a name="line54"></a>54         def popular_by_tags
-</span><span class="inferred1"><a name="line55"></a>55         end
-</span><span class="inferred0"><a name="line56"></a>56         
-</span><span class="marked1"><a name="line57"></a>57         def tagged_together_count
-</span><span class="inferred0"><a name="line58"></a>58         end
-</span><span class="inferred1"><a name="line59"></a>59         
-</span><span class="marked0"><a name="line60"></a>60         def tagged_count
-</span><span class="inferred1"><a name="line61"></a>61           
-</span><span class="inferred0"><a name="line62"></a>62         end
-</span><span class="inferred1"><a name="line63"></a>63       end # InstanceMethods
-</span><span class="inferred0"><a name="line64"></a>64     end
-</span><span class="inferred1"><a name="line65"></a>65   end
-</span><span class="inferred0"><a name="line66"></a>66 end
+<pre><span class="marked0"><a name="line1"></a>  1 module DataMapper
+</span><span class="marked1"><a name="line2"></a>  2   module Is
+</span><span class="marked0"><a name="line3"></a>  3     module Taggable
+</span><span class="inferred1"><a name="line4"></a>  4       
+</span><span class="marked0"><a name="line5"></a>  5       def is_tag(options=nil)
+</span><span class="marked1"><a name="line6"></a>  6         extend  DataMapper::Is::Taggable::SharedClassMethods
+</span><span class="marked0"><a name="line7"></a>  7         include DataMapper::Is::Taggable::SharedInstanceMethods
+</span><span class="marked1"><a name="line8"></a>  8         extend  DataMapper::Is::Taggable::TagClassMethods
+</span><span class="marked0"><a name="line9"></a>  9         include DataMapper::Is::Taggable::TagInstanceMethods
+</span><span class="marked1"><a name="line10"></a> 10         property :id, DataMapper::Types::Serial
+</span><span class="marked0"><a name="line11"></a> 11         property :name, String, :length =&gt; 255, :unique =&gt; true, :nullable =&gt; false
+</span><span class="marked1"><a name="line12"></a> 12         has n, :taggings
+</span><span class="marked0"><a name="line13"></a> 13         @tagger_classes ||= []
+</span><span class="marked1"><a name="line14"></a> 14         @taggable_classes ||= []
+</span><span class="inferred0"><a name="line15"></a> 15       end
+</span><span class="inferred1"><a name="line16"></a> 16       
+</span><span class="marked0"><a name="line17"></a> 17       module TagClassMethods
+</span><span class="marked1"><a name="line18"></a> 18         attr_reader :tagger
+</span><span class="marked0"><a name="line19"></a> 19         attr_reader :tagger_classes
+</span><span class="marked1"><a name="line20"></a> 20         attr_reader :taggable_classes
+</span><span class="inferred0"><a name="line21"></a> 21         #TODO: check if there is any concurrency problem here
+</span><span class="inferred1"><a name="line22"></a> 22         # NOT thread safe right now!!
+</span><span class="inferred0"><a name="line23"></a> 23         # need to make it safer!!
+</span><span class="marked1"><a name="line24"></a> 24         def as(tagger_or_tagger_class, &amp;block)
+</span><span class="marked0"><a name="line25"></a> 25           self.tagger = tagger_or_tagger_class
+</span><span class="marked1"><a name="line26"></a> 26           raise Exception(&quot;A block must be provided!&quot;) unless block_given?
+</span><span class="marked0"><a name="line27"></a> 27           yield
+</span><span class="marked1"><a name="line28"></a> 28           self.tagger=nil
+</span><span class="inferred0"><a name="line29"></a> 29         end
+</span><span class="inferred1"><a name="line30"></a> 30         
+</span><span class="marked0"><a name="line31"></a> 31         def tagged_count(options={})
+</span><span class="marked1"><a name="line32"></a> 32           tagger, taggable, tag_list, options = extract_options(options)
+</span><span class="marked0"><a name="line33"></a> 33           tagger_class, tagger_obj = extract_tagger_class_object(tagger)
+</span><span class="marked1"><a name="line34"></a> 34           taggable_class, taggable_obj = extract_taggable_class_object(taggable)
+</span><span class="inferred0"><a name="line35"></a> 35           
+</span><span class="marked1"><a name="line36"></a> 36           association = Tagging
+</span><span class="marked0"><a name="line37"></a> 37           association = association.by(tagger) if tagger
+</span><span class="marked1"><a name="line38"></a> 38           association = association.on(taggable) if taggable
+</span><span class="inferred0"><a name="line39"></a> 39           
+</span><span class="marked1"><a name="line40"></a> 40           tag_ids = tag_list.map{|t| Tag.get(t).id}
+</span><span class="marked0"><a name="line41"></a> 41           query = {:unique =&gt; true, :fields =&gt; [:taggable_type]}
+</span><span class="marked1"><a name="line42"></a> 42           query.merge!(:tag_id =&gt;tag_ids) unless tag_ids.empty?
+</span><span class="marked0"><a name="line43"></a> 43           query.merge!(options)
+</span><span class="inferred1"><a name="line44"></a> 44           
+</span><span class="marked0"><a name="line45"></a> 45           association.aggregate(:taggable_id.count, query).inject(0){|count, i| count + i[1]}
+</span><span class="inferred1"><a name="line46"></a> 46         end
+</span><span class="inferred0"><a name="line47"></a> 47         
+</span><span class="marked1"><a name="line48"></a> 48         def find_taggables(options)
+</span><span class="marked0"><a name="line49"></a> 49           tagger, taggable, tag_list, options = extract_options(options)
+</span><span class="marked1"><a name="line50"></a> 50           tagger_class, tagger_obj = extract_tagger_class_object(tagger)
+</span><span class="marked0"><a name="line51"></a> 51           taggable_class, taggable_obj = extract_taggable_class_object(taggable)
+</span><span class="inferred1"><a name="line52"></a> 52                     
+</span><span class="marked0"><a name="line53"></a> 53           if taggable_class.nil?
+</span><span class="marked1"><a name="line54"></a> 54             rv = Tag.taggable_classes.map{|klass| find_taggables(options.merge(:with =&gt; tag_list, :on =&gt;klass, :by =&gt; tagger) )}.flatten!
+</span><span class="marked0"><a name="line55"></a> 55             rv.uniq!
+</span><span class="marked1"><a name="line56"></a> 56             return rv
+</span><span class="inferred0"><a name="line57"></a> 57           end
+</span><span class="inferred1"><a name="line58"></a> 58           
+</span><span class="marked0"><a name="line59"></a> 59           query = {  taggable_class.tags.tag.name =&gt; tag_list.to_a,
+</span><span class="marked1"><a name="line60"></a> 60             Tagging.properties[:taggable_type] =&gt; taggable_class.to_s,
+</span><span class="inferred0"><a name="line61"></a> 61             :unique =&gt; true
+</span><span class="inferred1"><a name="line62"></a> 62            }
+</span><span class="marked0"><a name="line63"></a> 63            query.merge!(Tagging.properties[:tagger_type] =&gt; tagger_class) if tagger_class
+</span><span class="marked1"><a name="line64"></a> 64            query.merge!(Tagging.properties[:tagger_id] =&gt; tagger_obj.id) if tagger_obj          
+</span><span class="inferred0"><a name="line65"></a> 65           
+</span><span class="marked1"><a name="line66"></a> 66           unless options[:match] == :any
+</span><span class="marked0"><a name="line67"></a> 67             conditions = &quot;SELECT COUNT(DISTINCT(tag_id)) FROM taggings INNER JOIN tags ON taggings.tag_id = tags.id WHERE &quot;
+</span><span class="marked1"><a name="line68"></a> 68             counter_conditions = [
+</span><span class="inferred0"><a name="line69"></a> 69               &quot;taggings.taggable_type = '#{taggable_class.to_s}'&quot;,
+</span><span class="marked1"><a name="line70"></a> 70               &quot;taggings.taggable_id = #{taggable_class.storage_name}.id&quot;,
+</span><span class="marked0"><a name="line71"></a> 71               &quot;tags.name IN (#{tag_list.map{|t| '&quot;' &lt;&lt; t &lt;&lt; '&quot;'}.join(', ')})&quot;
+</span><span class="inferred1"><a name="line72"></a> 72               ]
+</span><span class="marked0"><a name="line73"></a> 73             counter_conditions &lt;&lt; &quot;taggings.tagger_type = '#{tagger_class.to_s}'&quot; if tagger_class
+</span><span class="marked1"><a name="line74"></a> 74             counter_conditions &lt;&lt; &quot;taggings.tagger_id = #{tagger_obj.id}&quot; if tagger_obj       
+</span><span class="marked0"><a name="line75"></a> 75             conditions = &quot;(&quot; &lt;&lt; conditions &lt;&lt; counter_conditions.join(&quot; AND &quot;) &lt;&lt; &quot;) = ?&quot;
+</span><span class="marked1"><a name="line76"></a> 76             conditions = [conditions, tag_list.size]          
+</span><span class="marked0"><a name="line77"></a> 77             query.merge!(:conditions =&gt; conditions)
+</span><span class="inferred1"><a name="line78"></a> 78           end
+</span><span class="marked0"><a name="line79"></a> 79           taggable_class.all(query)
+</span><span class="inferred1"><a name="line80"></a> 80         end
+</span><span class="inferred0"><a name="line81"></a> 81         
+</span><span class="inferred1"><a name="line82"></a> 82         # Returns an array of related tags.
+</span><span class="inferred0"><a name="line83"></a> 83         # Related tags are all the other tags that are found  tagged with the provided tags.
+</span><span class="inferred1"><a name="line84"></a> 84 #        def related(options)
+</span><span class="inferred0"><a name="line85"></a> 85 #          tagger, taggable, tag_list, cleaned_options = extract_options(options)
+</span><span class="inferred1"><a name="line86"></a> 86 #          tagger_class, tagger_obj = extract_tagger_class_object(tagger)
+</span><span class="inferred0"><a name="line87"></a> 87 #          taggable_class, taggable_obj = extract_taggable_class_object(taggable)
+</span><span class="inferred1"><a name="line88"></a> 88 #
+</span><span class="inferred0"><a name="line89"></a> 89 #          # find all the taggables that are related ...
+</span><span class="inferred1"><a name="line90"></a> 90 #          find_taggables(options).all()
+</span><span class="inferred0"><a name="line91"></a> 91 #        end
+</span><span class="inferred1"><a name="line92"></a> 92         
+</span><span class="marked0"><a name="line93"></a> 93         def fetch(name)
+</span><span class="marked1"><a name="line94"></a> 94           first(:name =&gt; name) || create(:name =&gt; name)
+</span><span class="marked0"><a name="line95"></a> 95         end
+</span><span class="inferred1"><a name="line96"></a> 96         
+</span><span class="marked0"><a name="line97"></a> 97         def get(name)
+</span><span class="marked1"><a name="line98"></a> 98           first(:name =&gt; name)
+</span><span class="marked0"><a name="line99"></a> 99         end
+</span><span class="inferred1"><a name="line100"></a>100         
+</span><span class="marked0"><a name="line101"></a>101         private        
+</span><span class="marked1"><a name="line102"></a>102         def tagger=(tagger)
+</span><span class="marked0"><a name="line103"></a>103           unless (tagger.respond_to?(:tagger?) &amp;&amp; tagger.tagger?) || tagger.nil?
+</span><span class="uncovered1"><a name="line104"></a>104             raise Exception.new(&quot;#{tagger} is not a tagger datamapper resource object!&quot;)
+</span><span class="uncovered0"><a name="line105"></a>105           end
+</span><span class="marked1"><a name="line106"></a>106           @tagger = tagger
+</span><span class="inferred0"><a name="line107"></a>107         end
+</span><span class="inferred1"><a name="line108"></a>108       end # ClassMethods
+</span><span class="inferred0"><a name="line109"></a>109 
+</span><span class="marked1"><a name="line110"></a>110       module TagInstanceMethods
+</span><span class="marked0"><a name="line111"></a>111         def &lt;=&gt;(other)
+</span><span class="marked1"><a name="line112"></a>112           self.name &lt;=&gt;(other.name)
+</span><span class="marked0"><a name="line113"></a>113         end
+</span><span class="marked1"><a name="line114"></a>114         def to_s
+</span><span class="uncovered0"><a name="line115"></a>115           self.name
+</span><span class="uncovered1"><a name="line116"></a>116         end
+</span><span class="inferred0"><a name="line117"></a>117         
+</span><span class="inferred1"><a name="line118"></a>118 
+</span><span class="inferred0"><a name="line119"></a>119         
+</span><span class="marked1"><a name="line120"></a>120         def popular_by_tags
+</span><span class="inferred0"><a name="line121"></a>121         end
+</span><span class="inferred1"><a name="line122"></a>122         
+</span><span class="marked0"><a name="line123"></a>123         def tagged_together_count
+</span><span class="inferred1"><a name="line124"></a>124         end
+</span><span class="inferred0"><a name="line125"></a>125         
+</span><span class="marked1"><a name="line126"></a>126         def tagged_count(conditions={})
+</span><span class="marked0"><a name="line127"></a>127           taggable_class, taggable_obj = extract_taggable_class_object(conditions.delete(:on))
+</span><span class="marked1"><a name="line128"></a>128           tagger_class, tagger_obj = extract_tagger_class_object(conditions.delete(:by))
+</span><span class="inferred0"><a name="line129"></a>129           
+</span><span class="marked1"><a name="line130"></a>130           association = if taggable_class &amp;&amp; taggable_class.is_a?(Class) &amp;&amp; taggable_class.taggable?
+</span><span class="marked0"><a name="line131"></a>131             taggable_class.all.taggings
+</span><span class="inferred1"><a name="line132"></a>132           else
+</span><span class="marked0"><a name="line133"></a>133             Tagging.all
+</span><span class="inferred1"><a name="line134"></a>134           end
+</span><span class="inferred0"><a name="line135"></a>135           
+</span><span class="marked1"><a name="line136"></a>136           association = association.all(:tagger_type =&gt; tagger_class.to_s) if tagger_class
+</span><span class="marked0"><a name="line137"></a>137           association = association.all(:tagger_id =&gt; tagger_obj.id) if tagger_obj
+</span><span class="inferred1"><a name="line138"></a>138 
+</span><span class="marked0"><a name="line139"></a>139           query = {:unique =&gt; true, :tag_id =&gt; self.id, :fields =&gt; [:taggable_type]}
+</span><span class="marked1"><a name="line140"></a>140           query.merge!(conditions)
+</span><span class="inferred0"><a name="line141"></a>141           
+</span><span class="marked1"><a name="line142"></a>142           association.aggregate(:taggable_id.count, query).inject(0){|count, i| count + i[1]}
+</span><span class="inferred0"><a name="line143"></a>143         end
+</span><span class="inferred1"><a name="line144"></a>144       end # InstanceMethods
+</span><span class="inferred0"><a name="line145"></a>145     end
+</span><span class="inferred1"><a name="line146"></a>146   end
+</span><span class="inferred0"><a name="line147"></a>147 end
 </span></pre><hr/>
     <p>Generated using the <a href='http://eigenclass.org/hiki.rb?rcov'>rcov code coverage analysis tool for Ruby</a>
    version 0.8.1.2.</p>

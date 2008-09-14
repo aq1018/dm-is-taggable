@@ -9,6 +9,7 @@ module DataMapper
         include DataMapper::Is::Taggable::TaggerInstanceMethods
 
         @taggable_classes = options[:on]
+        Tag.instance_variable_set('@taggable_classes', (Tag.instance_variable_get('@taggable_classes') | @taggable_classes))
         
         has n, :taggings, :class_name => "Tagging", :child_key => [:tagger_id], :tagger_type => self.to_s
         # real ugly syntax... wait until dm make better conditional has n :through association better, than update code
@@ -42,15 +43,16 @@ module DataMapper
           return self.class.taggable_classes.include?(taggable.class)
         end
 
-        def all_tagged_with(*params)
-          
+        def find_taggables(options)
+          tagger, taggable, tag_list, options = extract_options(options)
+          tagger = self
+          Tag.find_taggables(options.merge(:with => tag_list, :on =>taggable, :by => tagger))
         end
         
-        def tag_with(*params)
-          # get the first paramater as the taggable object
+        def tag(options)
+          tagger, taggable, tags = extract_options(options)
           tagger = self
-          taggable = params.delete_at(0)
-          self.class.create_taggings(tagger, taggable, params)
+          self.class.create_taggings(tagger, taggable, tags)
         end
       end # InstanceMethods
     end

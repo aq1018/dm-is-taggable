@@ -3,15 +3,21 @@ module DataMapper
     module Taggable
       
       def is_tag(options=nil)
+        extend  DataMapper::Is::Taggable::SharedClassMethods
+        include DataMapper::Is::Taggable::SharedInstanceMethods
         extend  DataMapper::Is::Taggable::TagClassMethods
         include DataMapper::Is::Taggable::TagInstanceMethods
         property :id, DataMapper::Types::Serial
         property :name, String, :length => 255, :unique => true, :nullable => false
         has n, :taggings
+        @tagger_classes ||= []
+        @taggable_classes ||= []
       end
       
       module TagClassMethods
         attr_reader :tagger
+        attr_reader :tagger_classes
+        attr_reader :taggable_classes
         #TODO: check if there is any concurrency problem here
         # NOT thread safe right now!!
         # need to make it safer!!
@@ -22,9 +28,67 @@ module DataMapper
           self.tagger=nil
         end
         
-        def all_by(tagger)
+        def tagged_count(options={})
+          tagger, taggable, tag_list, options = extract_options(options)
+          tagger_class, tagger_obj = extract_tagger_class_object(tagger)
+          taggable_class, taggable_obj = extract_taggable_class_object(taggable)
           
+          association = Tagging
+          association = association.by(tagger) if tagger
+          association = association.on(taggable) if taggable
+          
+          tag_ids = tag_list.map{|t| Tag.get(t).id}
+          query = {:unique => true, :fields => [:taggable_type]}
+          query.merge!(:tag_id =>tag_ids) unless tag_ids.empty?
+          query.merge!(options)
+          
+          association.aggregate(:taggable_id.count, query).inject(0){|count, i| count + i[1]}
         end
+        
+        def find_taggables(options)
+          tagger, taggable, tag_list, options = extract_options(options)
+          tagger_class, tagger_obj = extract_tagger_class_object(tagger)
+          taggable_class, taggable_obj = extract_taggable_class_object(taggable)
+                    
+          if taggable_class.nil?
+            rv = Tag.taggable_classes.map{|klass| find_taggables(options.merge(:with => tag_list, :on =>klass, :by => tagger) )}.flatten!
+            rv.uniq!
+            return rv
+          end
+          
+          query = {  taggable_class.tags.tag.name => tag_list.to_a,
+            Tagging.properties[:taggable_type] => taggable_class.to_s,
+            :unique => true
+           }
+           query.merge!(Tagging.properties[:tagger_type] => tagger_class) if tagger_class
+           query.merge!(Tagging.properties[:tagger_id] => tagger_obj.id) if tagger_obj          
+          
+          unless options[:match] == :any
+            conditions = "SELECT COUNT(DISTINCT(tag_id)) FROM taggings INNER JOIN tags ON taggings.tag_id = tags.id WHERE "
+            counter_conditions = [
+              "taggings.taggable_type = '#{taggable_class.to_s}'",
+              "taggings.taggable_id = #{taggable_class.storage_name}.id",
+              "tags.name IN (#{tag_list.map{|t| '"' << t << '"'}.join(', ')})"
+              ]
+            counter_conditions << "taggings.tagger_type = '#{tagger_class.to_s}'" if tagger_class
+            counter_conditions << "taggings.tagger_id = #{tagger_obj.id}" if tagger_obj       
+            conditions = "(" << conditions << counter_conditions.join(" AND ") << ") = ?"
+            conditions = [conditions, tag_list.size]          
+            query.merge!(:conditions => conditions)
+          end
+          taggable_class.all(query)
+        end
+        
+        # Returns an array of related tags.
+        # Related tags are all the other tags that are found  tagged with the provided tags.
+#        def related(options)
+#          tagger, taggable, tag_list, cleaned_options = extract_options(options)
+#          tagger_class, tagger_obj = extract_tagger_class_object(tagger)
+#          taggable_class, taggable_obj = extract_taggable_class_object(taggable)
+#
+#          # find all the taggables that are related ...
+#          find_taggables(options).all()
+#        end
         
         def fetch(name)
           first(:name => name) || create(:name => name)
@@ -44,12 +108,14 @@ module DataMapper
       end # ClassMethods
 
       module TagInstanceMethods
+        def <=>(other)
+          self.name <=>(other.name)
+        end
         def to_s
           self.name
         end
         
-        def related_tags(tag)
-        end
+
         
         def popular_by_tags
         end
@@ -57,8 +123,23 @@ module DataMapper
         def tagged_together_count
         end
         
-        def tagged_count
+        def tagged_count(conditions={})
+          taggable_class, taggable_obj = extract_taggable_class_object(conditions.delete(:on))
+          tagger_class, tagger_obj = extract_tagger_class_object(conditions.delete(:by))
           
+          association = if taggable_class && taggable_class.is_a?(Class) && taggable_class.taggable?
+            taggable_class.all.taggings
+          else
+            Tagging.all
+          end
+          
+          association = association.all(:tagger_type => tagger_class.to_s) if tagger_class
+          association = association.all(:tagger_id => tagger_obj.id) if tagger_obj
+
+          query = {:unique => true, :tag_id => self.id, :fields => [:taggable_type]}
+          query.merge!(conditions)
+          
+          association.aggregate(:taggable_id.count, query).inject(0){|count, i| count + i[1]}
         end
       end # InstanceMethods
     end

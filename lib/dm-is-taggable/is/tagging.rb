@@ -3,6 +3,8 @@ module DataMapper
     module Taggable
       
       def is_tagging(options=nil)
+        extend  DataMapper::Is::Taggable::SharedClassMethods
+        include DataMapper::Is::Taggable::SharedInstanceMethods
         extend  DataMapper::Is::Taggable::TaggingClassMethods
         include DataMapper::Is::Taggable::TaggingInstanceMethods
 
