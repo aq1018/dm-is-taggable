@@ -7,6 +7,11 @@ TODO
 lib/dm-is-taggable.rb
 lib/dm-is-taggable/is/taggable.rb
 lib/dm-is-taggable/is/version.rb
+lib/dm-is-taggable/tag_list.rb
+lib/dm-is-taggable/is/shared.rb
+lib/dm-is-taggable/is/tag.rb
+lib/dm-is-taggable/is/tagging.rb
+lib/dm-is-taggable/is/tagger.rb
 spec/integration/taggable_spec.rb
 spec/spec.opts
 spec/spec_helper.rb
