@@ -553,7 +553,7 @@ span.run100 {
 </style>
     </head>
   <body><h3>C0 code coverage information</h3>
-    <p>Generated on Sun Sep 14 04:01:05 -0700 2008 with <a href='http://eigenclass.org/hiki/rcov'>rcov 0.8.1.2</a>
+    <p>Generated on Sun Sep 14 19:50:34 -0700 2008 with <a href='http://eigenclass.org/hiki/rcov'>rcov 0.8.1.2</a>
       </p>
     <hr/>
     <pre><span class='marked0'>Code reported as executed by Ruby looks like this...
@@ -598,66 +598,66 @@ span.run100 {
       </tr>
     </tbody>
   </table>
-<pre><span class="marked1"><a name="line1"></a> 1 module DataMapper
-</span><span class="marked0"><a name="line2"></a> 2   module Is
-</span><span class="marked1"><a name="line3"></a> 3     module Taggable
-</span><span class="inferred0"><a name="line4"></a> 4       
-</span><span class="marked1"><a name="line5"></a> 5       def is_tagger(options)
-</span><span class="marked0"><a name="line6"></a> 6         extend  DataMapper::Is::Taggable::SharedClassMethods
-</span><span class="marked1"><a name="line7"></a> 7         include DataMapper::Is::Taggable::SharedInstanceMethods
-</span><span class="marked0"><a name="line8"></a> 8         extend  DataMapper::Is::Taggable::TaggerClassMethods
-</span><span class="marked1"><a name="line9"></a> 9         include DataMapper::Is::Taggable::TaggerInstanceMethods
-</span><span class="inferred0"><a name="line10"></a>10 
-</span><span class="marked1"><a name="line11"></a>11         @taggable_classes = options[:on]
-</span><span class="marked0"><a name="line12"></a>12         Tag.instance_variable_set('@taggable_classes', (Tag.instance_variable_get('@taggable_classes') | @taggable_classes))
-</span><span class="inferred1"><a name="line13"></a>13         
-</span><span class="marked0"><a name="line14"></a>14         has n, :taggings, :class_name =&gt; &quot;Tagging&quot;, :child_key =&gt; [:tagger_id], :tagger_type =&gt; self.to_s
-</span><span class="inferred1"><a name="line15"></a>15         # real ugly syntax... wait until dm make better conditional has n :through association better, than update code
-</span><span class="marked0"><a name="line16"></a>16         has n, :tags, :through =&gt; :taggings, :class_name =&gt; &quot;Tag&quot;, :child_key =&gt; [:tagger_id], Tagging.properties[:tagger_type] =&gt; self.to_s
-</span><span class="inferred1"><a name="line17"></a>17       end
-</span><span class="inferred0"><a name="line18"></a>18       
-</span><span class="marked1"><a name="line19"></a>19       module TaggerClassMethods 
-</span><span class="marked0"><a name="line20"></a>20         def taggable_classes
-</span><span class="marked1"><a name="line21"></a>21           @taggable_classes.map{|klass| Extlib::Inflection.constantize(klass.to_s.singular.camel_case)}
-</span><span class="marked0"><a name="line22"></a>22         end
-</span><span class="inferred1"><a name="line23"></a>23         
-</span><span class="marked0"><a name="line24"></a>24         def tagger?;true;end
-</span><span class="marked1"><a name="line25"></a>25         def taggable?;false;end
-</span><span class="marked0"><a name="line26"></a>26         def tagger_class;self;end
-</span><span class="inferred1"><a name="line27"></a>27         
-</span><span class="marked0"><a name="line28"></a>28         def all_similar_by_tags
-</span><span class="inferred1"><a name="line29"></a>29         end
-</span><span class="inferred0"><a name="line30"></a>30         
-</span><span class="inferred1"><a name="line31"></a>31       end # ClassMethods
-</span><span class="inferred0"><a name="line32"></a>32 
-</span><span class="marked1"><a name="line33"></a>33       module TaggerInstanceMethods
-</span><span class="marked0"><a name="line34"></a>34         def tagger?;true;end
-</span><span class="marked1"><a name="line35"></a>35         def taggable?;false;end
-</span><span class="marked0"><a name="line36"></a>36         def tagger_class;self.class;end
-</span><span class="marked1"><a name="line37"></a>37         def tagger;self;end
-</span><span class="inferred0"><a name="line38"></a>38         
-</span><span class="marked1"><a name="line39"></a>39         def can_tag_on?(taggable)
-</span><span class="marked0"><a name="line40"></a>40           if taggable.is_a?(Class)
-</span><span class="uncovered1"><a name="line41"></a>41             return self.class.taggable_classes.include?(taggable)
-</span><span class="uncovered0"><a name="line42"></a>42           end
-</span><span class="marked1"><a name="line43"></a>43           return self.class.taggable_classes.include?(taggable.class)
-</span><span class="inferred0"><a name="line44"></a>44         end
-</span><span class="inferred1"><a name="line45"></a>45 
-</span><span class="marked0"><a name="line46"></a>46         def find_taggables(options)
-</span><span class="marked1"><a name="line47"></a>47           tagger, taggable, tag_list, options = extract_options(options)
-</span><span class="marked0"><a name="line48"></a>48           tagger = self
-</span><span class="marked1"><a name="line49"></a>49           Tag.find_taggables(options.merge(:with =&gt; tag_list, :on =&gt;taggable, :by =&gt; tagger))
-</span><span class="inferred0"><a name="line50"></a>50         end
-</span><span class="inferred1"><a name="line51"></a>51         
-</span><span class="marked0"><a name="line52"></a>52         def tag(options)
-</span><span class="marked1"><a name="line53"></a>53           tagger, taggable, tags = extract_options(options)
-</span><span class="marked0"><a name="line54"></a>54           tagger = self
-</span><span class="marked1"><a name="line55"></a>55           self.class.create_taggings(tagger, taggable, tags)
-</span><span class="inferred0"><a name="line56"></a>56         end
-</span><span class="inferred1"><a name="line57"></a>57       end # InstanceMethods
-</span><span class="inferred0"><a name="line58"></a>58     end
-</span><span class="inferred1"><a name="line59"></a>59   end
-</span><span class="inferred0"><a name="line60"></a>60 end
+<pre><span class="marked0"><a name="line1"></a> 1 module DataMapper
+</span><span class="marked1"><a name="line2"></a> 2   module Is
+</span><span class="marked0"><a name="line3"></a> 3     module Taggable
+</span><span class="inferred1"><a name="line4"></a> 4       
+</span><span class="marked0"><a name="line5"></a> 5       def is_tagger(options)
+</span><span class="marked1"><a name="line6"></a> 6         extend  DataMapper::Is::Taggable::SharedClassMethods
+</span><span class="marked0"><a name="line7"></a> 7         include DataMapper::Is::Taggable::SharedInstanceMethods
+</span><span class="marked1"><a name="line8"></a> 8         extend  DataMapper::Is::Taggable::TaggerClassMethods
+</span><span class="marked0"><a name="line9"></a> 9         include DataMapper::Is::Taggable::TaggerInstanceMethods
+</span><span class="inferred1"><a name="line10"></a>10 
+</span><span class="marked0"><a name="line11"></a>11         @taggable_classes = options[:on]
+</span><span class="marked1"><a name="line12"></a>12         Tag.instance_variable_set('@taggable_classes', (Tag.instance_variable_get('@taggable_classes') | @taggable_classes))
+</span><span class="inferred0"><a name="line13"></a>13         
+</span><span class="marked1"><a name="line14"></a>14         has n, :taggings, :class_name =&gt; &quot;Tagging&quot;, :child_key =&gt; [:tagger_id], :tagger_type =&gt; self.to_s
+</span><span class="inferred0"><a name="line15"></a>15         # real ugly syntax... wait until dm make better conditional has n :through association better, than update code
+</span><span class="marked1"><a name="line16"></a>16         has n, :tags, :through =&gt; :taggings, :class_name =&gt; &quot;Tag&quot;, :child_key =&gt; [:tagger_id], Tagging.properties[:tagger_type] =&gt; self.to_s
+</span><span class="inferred0"><a name="line17"></a>17       end
+</span><span class="inferred1"><a name="line18"></a>18       
+</span><span class="marked0"><a name="line19"></a>19       module TaggerClassMethods 
+</span><span class="marked1"><a name="line20"></a>20         def taggable_classes
+</span><span class="marked0"><a name="line21"></a>21           @taggable_classes.map{|klass| Extlib::Inflection.constantize(klass.to_s.singular.camel_case)}
+</span><span class="marked1"><a name="line22"></a>22         end
+</span><span class="inferred0"><a name="line23"></a>23         
+</span><span class="marked1"><a name="line24"></a>24         def tagger?;true;end
+</span><span class="marked0"><a name="line25"></a>25         def taggable?;false;end
+</span><span class="marked1"><a name="line26"></a>26         def tagger_class;self;end
+</span><span class="inferred0"><a name="line27"></a>27         
+</span><span class="marked1"><a name="line28"></a>28         def all_similar_by_tags
+</span><span class="inferred0"><a name="line29"></a>29         end
+</span><span class="inferred1"><a name="line30"></a>30         
+</span><span class="inferred0"><a name="line31"></a>31       end # ClassMethods
+</span><span class="inferred1"><a name="line32"></a>32 
+</span><span class="marked0"><a name="line33"></a>33       module TaggerInstanceMethods
+</span><span class="marked1"><a name="line34"></a>34         def tagger?;true;end
+</span><span class="marked0"><a name="line35"></a>35         def taggable?;false;end
+</span><span class="marked1"><a name="line36"></a>36         def tagger_class;self.class;end
+</span><span class="marked0"><a name="line37"></a>37         def tagger;self;end
+</span><span class="inferred1"><a name="line38"></a>38         
+</span><span class="marked0"><a name="line39"></a>39         def can_tag_on?(taggable)
+</span><span class="marked1"><a name="line40"></a>40           if taggable.is_a?(Class)
+</span><span class="uncovered0"><a name="line41"></a>41             return self.class.taggable_classes.include?(taggable)
+</span><span class="uncovered1"><a name="line42"></a>42           end
+</span><span class="marked0"><a name="line43"></a>43           return self.class.taggable_classes.include?(taggable.class)
+</span><span class="inferred1"><a name="line44"></a>44         end
+</span><span class="inferred0"><a name="line45"></a>45 
+</span><span class="marked1"><a name="line46"></a>46         def find_taggables(options)
+</span><span class="marked0"><a name="line47"></a>47           tagger, taggable, tag_list, options = extract_options(options)
+</span><span class="marked1"><a name="line48"></a>48           tagger = self
+</span><span class="marked0"><a name="line49"></a>49           Tag.find_taggables(options.merge(:with =&gt; tag_list, :on =&gt;taggable, :by =&gt; tagger))
+</span><span class="inferred1"><a name="line50"></a>50         end
+</span><span class="inferred0"><a name="line51"></a>51         
+</span><span class="marked1"><a name="line52"></a>52         def tag(options)
+</span><span class="marked0"><a name="line53"></a>53           tagger, taggable, tags = extract_options(options)
+</span><span class="marked1"><a name="line54"></a>54           tagger = self
+</span><span class="marked0"><a name="line55"></a>55           self.class.create_taggings(tagger, taggable, tags)
+</span><span class="inferred1"><a name="line56"></a>56         end
+</span><span class="inferred0"><a name="line57"></a>57       end # InstanceMethods
+</span><span class="inferred1"><a name="line58"></a>58     end
+</span><span class="inferred0"><a name="line59"></a>59   end
+</span><span class="inferred1"><a name="line60"></a>60 end
 </span></pre><hr/>
     <p>Generated using the <a href='http://eigenclass.org/hiki.rb?rcov'>rcov code coverage analysis tool for Ruby</a>
    version 0.8.1.2.</p>

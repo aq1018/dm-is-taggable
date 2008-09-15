@@ -231,8 +231,14 @@ if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
        Tag.tagged_count(:by => User).should == 3
        Tag.tagged_count.should == 3
      end
+     
+     it "should be able to retrieve the most association (in this case user) popular by tags for a certain tag" do
+       # This returns a list of taggers with descending order of tag count
+       Tag.get("tag1").popular_by_tags.should == [@user1, @user2, @bot1] # should return array and calculate this based upon the usage of the tag
+     end
          
 #     it "should be able to retrieve related tags that where used in the same set" do
+#     relate through what?? taggable? tagger?
 #       related_tags = Tag.get("tag3").related_tags
 #       related_tags.size.should == 2
 #       related_tags.include?(Tag.get("tag1")).should be_true
@@ -252,14 +258,12 @@ if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
     #   # Tag.get("tag3").related_tags.first.tagged_together_count = 1 # first would return tag1
     # end
     # 
-    # it "should be able to retrieve the most association (in this case user) popular by tags for a certain tag" do
-    #   pending
-    #   # Need more details on the calculation
-    #   # Tag.get("tag1").popular_by_tags.should == [@aaron] # should return array and calculate this based upon the usage of the tag
-    # end
+
     # 
     # 
     # it "should be able to retrieve similar users with same kind of tagging behavior sorted on similarity" do
+    #  What kind of similarity?
+    #  A list of users with the highest same tags???
     #   User.all_similar_by_tags.should == [@maxime]
     # end
 

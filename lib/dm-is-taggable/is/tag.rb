@@ -118,6 +118,34 @@ module DataMapper
 
         
         def popular_by_tags
+          sql= "SELECT tagger_type, tagger_id, COUNT( taggable_id ) AS counter
+                    FROM taggings
+                    INNER JOIN tags ON taggings.tag_id = tags.id
+                    WHERE tags.name = '#{self.name}'
+                    GROUP BY tagger_type, tagger_id
+                    ORDER BY counter DESC"
+          tagger_columns = repository.adapter.query(sql)
+          tagger_hash = {}
+          counter_hash = {}
+          # group all keys
+          tagger_columns.each do |t|
+            t = t.to_a
+            tagger_hash[t[0]] ||= []
+            tagger_hash[t[0]] << t[1]
+            count = t.pop
+            counter_hash[t] = count
+          end
+          taggers = []
+          # find all taggers
+          tagger_hash.each_pair do |key, value|
+            taggers = taggers + Extlib::Inflection.constantize(key).all(:id => value)
+          end
+          # sort the taggers by count
+          taggers.sort! do |a, b|
+            counter_hash[[a.class.to_s, a.id]] <=>counter_hash[[b.class.to_s, b.id]]
+          end.reverse!
+
+          taggers
         end
         
         def tagged_together_count
