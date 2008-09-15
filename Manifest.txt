@@ -5,6 +5,7 @@ README.txt
 Rakefile
 TODO
 lib/dm-is-taggable.rb
+lib/dm-is-taggable/aggregate_patch.rb
 lib/dm-is-taggable/is/taggable.rb
 lib/dm-is-taggable/is/version.rb
 lib/dm-is-taggable/tag_list.rb
