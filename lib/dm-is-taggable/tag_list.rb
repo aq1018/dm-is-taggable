@@ -1,3 +1,11 @@
+# Backporting the ends_with? method from Rails' ActiveSupport
+class String
+  def ends_with?(suffix)
+    suffix = suffix.to_s
+    self[-suffix.length, suffix.length] == suffix     
+  end
+end
+
 class TagList < Array
   cattr_accessor :delimiter
   self.delimiter = ','
