@@ -1,16 +1,6 @@
 require 'pathname'
 require Pathname(__FILE__).dirname.expand_path.parent + 'spec_helper'
 
-require "dm-types"
-require "dm-aggregates"
-
-require Pathname(__FILE__).dirname.expand_path.parent / 'data' / 'tag'
-require Pathname(__FILE__).dirname.expand_path.parent / 'data' / 'tagging'
-require Pathname(__FILE__).dirname.expand_path.parent / 'data' / 'bot'
-require Pathname(__FILE__).dirname.expand_path.parent / 'data' / 'user'
-require Pathname(__FILE__).dirname.expand_path.parent / 'data' / 'picture'
-require Pathname(__FILE__).dirname.expand_path.parent / 'data' / 'article'
-
 #DataObjects::Sqlite3.logger = DataObjects::Logger.new(STDOUT, 0)
 DataMapper.auto_migrate!
 
@@ -18,13 +8,13 @@ if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
   describe 'DataMapper::Is::Taggable' do
     before(:all) do
       @user1 = User.create(:name => "user1")
-      @user2 = User.create(:name => "user2")
+      @user2 = User.create(:name => "user2")\
       
       @bot1 = Bot.create(:name => "bot1")
       @bot2 = Bot.create(:name => "bot2")
       
       @picture1 = Picture.create
-      @picture1.tag(:by =>@user1, :with => "tag1, tag2, tag3")
+      @picture1.tag(:by => @user1, :with => "tag1, tag2, tag3")
       @picture1.tag(:by => @user2, :with => "tag10, tag2, tag3")
 
       @picture2 = Picture.create
@@ -76,7 +66,7 @@ if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
       picture.destroy
     end
     
-    it "should be able to retrieve Pciture by with_any_tags" do
+    it "should be able to retrieve Picture by with_any_tags" do
       Picture.find( :match => :any ,:with => ["tag2", "tag5"]).size.should == 2
       Picture.find( :match => :any ,:with => ["tag2", "tag5"]).include?(@picture1).should be_true
       Picture.find( :match => :any ,:with => ["tag2", "tag5"]).include?(@picture2).should be_true
@@ -89,7 +79,7 @@ if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
       Picture.find( :match => :any ,:by => Bot, :with => ["tag_by_bot", "tag5"]).include?(@picture1).should be_true
     end
     
-    it "should be able to retrieve Pciture by find" do
+    it "should be able to retrieve Picture by find" do
       Picture.find(:with =>"tag1").size.should == 2
       Picture.find(:with =>"tag1").include?(@picture1).should be_true
       Picture.find(:with =>"tag1").include?(@picture2).should be_true
@@ -211,7 +201,7 @@ if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
 
     it "should be able to retrieve all objects tagged by the user" do
        @user1.find_taggables(:with =>["tag1", "tag4"], :match => :any).should == [@article, @picture1]
-       @user1.find_taggables(:with =>["tag1", "tag4"], :match => :all).should == [ @article]
+       @user1.find_taggables(:with =>["tag1", "tag4"], :match => :all).should == [@article]
      end
           
      it "should be able to retrieve all objects tagged with certain tag" do
@@ -251,21 +241,11 @@ if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
 #       related_tags.include?(Tag.get("tag4")).should be_true
 #       related_tags.include?(Tag.get("tag5")).should be_true
 #     end
-    # 
+
     # it "should be able to retrieve the times that tags where used in the same set" do
     #   pending
     #   # Not sure what this means...
     #   # Tag.get("tag3").related_tags.first.tagged_together_count = 1 # first would return tag1
     # end
-    # 
-
-    # 
-    # 
-    # it "should be able to retrieve similar users with same kind of tagging behavior sorted on similarity" do
-    #  What kind of similarity?
-    #  A list of users with the highest same tags???
-    #   User.all_similar_by_tags.should == [@maxime]
-    # end
-
   end
 end

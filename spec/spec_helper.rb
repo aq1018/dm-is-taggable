@@ -21,8 +21,18 @@ def load_driver(name, default_uri)
   end
 end
 
-ENV['ADAPTER'] ||= 'sqlite3'
+ENV['ADAPTER'] ||= 'postgres'
 
 HAS_SQLITE3  = load_driver(:sqlite3,  'sqlite3::memory:')
-HAS_MYSQL    = load_driver(:mysql,    'mysql://root@localhost/dm_core_test')
-HAS_POSTGRES = load_driver(:postgres, 'postgres://postgres@localhost/dm_core_test')
+HAS_MYSQL    = load_driver(:mysql,    'mysql://maxime@localhost/dm_is_taggable_test')
+HAS_POSTGRES = load_driver(:postgres, 'postgres://maxime@localhost/dm_is_taggable_test')
+
+require "dm-types"
+require "dm-aggregates"
+
+require Pathname(__FILE__).dirname.expand_path / 'data' / 'tag'
+require Pathname(__FILE__).dirname.expand_path / 'data' / 'tagging'
+require Pathname(__FILE__).dirname.expand_path / 'data' / 'bot'
+require Pathname(__FILE__).dirname.expand_path / 'data' / 'user'
+require Pathname(__FILE__).dirname.expand_path / 'data' / 'picture'
+require Pathname(__FILE__).dirname.expand_path / 'data' / 'article'
