@@ -68,12 +68,12 @@ module DataMapper
             counter_conditions = [
               "taggings.taggable_type = '#{taggable_class.to_s}'",
               "taggings.taggable_id = #{taggable_class.storage_name}.id",
-              "tags.id IN (#{tag_list.map{|t| Tag.fetch(t).id }.join(', ')})"
+              "tags.name IN ?"
               ]
             counter_conditions << "taggings.tagger_type = '#{tagger_class.to_s}'" if tagger_class
             counter_conditions << "taggings.tagger_id = #{tagger_obj.id}" if tagger_obj       
             conditions = "(" << conditions << counter_conditions.join(" AND ") << ") = ?"
-            conditions = [conditions, tag_list.size]          
+            conditions = [conditions, tag_list, tag_list.size]          
             query.merge!(:conditions => conditions)
           end
           taggable_class.all(query)

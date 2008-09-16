@@ -1,39 +1,85 @@
 h1. dm-is-taggable
 
+dm-is-taggable is a tagging system built for datamapper. It has supports for multiple tagger types and taggable types.
+Each tagger can tag different taggable objects.
 
-h2. Using dm-is-taggable
+h2. Using dm-is-taggable in your code
 
 h3. Define taggers
 
 <pre><code>
-class User
-  include DataMapper::Resource
-  property :id, Serial
-  property :name, String
-  is :tagger, :on => ["Article", "Picture"]
-end
+  class User
+    include DataMapper::Resource
+    property :id, Serial
+    property :name, String
+    is :tagger, :on => ["Article", "Picture"]
+  end
 
-class Bot
-  include DataMapper::Resource
-  property :id, Serial
-  property :name, String
-  is :tagger, :on => ["Article", "Picture"]
-end
+  class Bot
+    include DataMapper::Resource
+    property :id, Serial
+    property :name, String
+    is :tagger, :on => ["Article", "Picture"]
+  end
 </code></pre>
 
-=== Add taggables
+h3. Define taggables
 
 <pre><code>
-class Article
-  include DataMapper::Resource
-  property :id, Serial
-  is :taggable, :by => ["User", "Bot"]
-end
+  class Article
+    include DataMapper::Resource
+    property :id, Serial
+    is :taggable, :by => ["User", "Bot"]
+  end
 
-class Picture
-  include DataMapper::Resource
-  property :id, Serial
-  is :taggable, :by => ["User", "Bot"]
-end
+  class Picture
+    include DataMapper::Resource
+    property :id, Serial
+    is :taggable, :by => ["User", "Bot"]
+  end
 </code></pre>
 
+h3. Create tags
+
+<pre><code>
+  
+  @picture = Picture.first
+  @scott = User.first
+  
+  # You can tag like this
+  @picture.tag(:with => "shanghai, bar, beer", :by => @scott)
+  
+  # or like this
+  # Note: this doesn't remove the previous tags
+  Tag.as(@scott) do
+    @picture.tag(:with => "cool, tag1, tag2")
+  end
+  
+  # or like this
+  # Note, this removes all previous tags
+  Tag.as(@scott) do
+    @picture.taglist("cool, tag1, tag2")
+  end
+</code></pre>
+
+h3. Retrieve objects with tags
+
+<pre><code>
+  
+  Picture.
+  
+  # You can tag like this
+  @picture.tag(:with => "shanghai, bar, beer", :by => @scott)
+  
+  # or like this
+  # Note: this doesn't remove the previous tags
+  Tag.as(@scott) do
+    @picture.tag(:with => "cool, tag1, tag2")
+  end
+  
+  # or like this
+  # Note, this removes all previous tags
+  Tag.as(@scott) do
+    @picture.taglist("cool, tag1, tag2")
+  end
+</code></pre>
