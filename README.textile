@@ -3,6 +3,33 @@ h1. dm-is-taggable
 dm-is-taggable is a tagging system built for datamapper. It has supports for multiple tagger types and taggable types.
 Each tagger can tag different taggable objects.
 
+
+h2. Installation
+
+h3. Download the plugin
+
+In your console:
+<pre><code>
+git clone git://github.com/aq1018/dm-is-taggable.git
+</code></pre>
+
+h3. Install the gem
+
+In your console:
+<pre><code>
+cd dm-is-taggable
+sudo rake install
+</code></pre>
+
+h3. Include it Merb
+
+In merb init.rb:
+
+<pre><code>
+dependency "dm-is-taggable"
+</code></pre>
+
+
 h2. Using dm-is-taggable in your code
 
 h3. Define taggers
