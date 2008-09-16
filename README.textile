@@ -1,9 +1,9 @@
-= dm-is-taggable
+h1. dm-is-taggable
 
 
-== Using dm-is-taggable
+h2. Using dm-is-taggable
 
-=== Define taggers
+h3. Define taggers
 
 @@@ruby
 class User
