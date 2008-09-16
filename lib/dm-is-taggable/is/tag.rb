@@ -37,9 +37,8 @@ module DataMapper
           association = association.by(tagger) if tagger
           association = association.on(taggable) if taggable
           
-          tag_ids = tag_list.map{|t| Tag.get(t).id}
           query = {:unique => true, :fields => [:taggable_type]}
-          query.merge!(:tag_id =>tag_ids) unless tag_ids.empty?
+          query.merge!(Tagging.tag.name => tag_list.to_a) unless tag_list.empty?
           query.merge!(options)
           
           association.aggregate(:taggable_id.count, query).inject(0){|count, i| count + i[1]}
