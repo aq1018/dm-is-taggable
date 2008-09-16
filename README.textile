@@ -5,7 +5,7 @@ h2. Using dm-is-taggable
 
 h3. Define taggers
 
-@@@ruby
+<pre><code>
 class User
   include DataMapper::Resource
   property :id, Serial
@@ -19,11 +19,11 @@ class Bot
   property :name, String
   is :tagger, :on => ["Article", "Picture"]
 end
-@@@
+</code></pre>
 
 === Add taggables
 
-@@@ruby
+<pre><code>
 class Article
   include DataMapper::Resource
   property :id, Serial
@@ -35,5 +35,5 @@ class Picture
   property :id, Serial
   is :taggable, :by => ["User", "Bot"]
 end
-@@@
+</code></pre>
 
