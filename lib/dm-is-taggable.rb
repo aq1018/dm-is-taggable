@@ -25,3 +25,7 @@ module DataMapper
     end # module ClassMethods
   end # module Resource
 end # module DataMapper
+
+# Require the Tag and Tagging Resources
+require Pathname(__FILE__).dirname.expand_path / 'dm-is-taggable' / 'tag.rb'
+require Pathname(__FILE__).dirname.expand_path / 'dm-is-taggable' / 'tagging.rb'

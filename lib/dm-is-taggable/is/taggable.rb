@@ -37,6 +37,7 @@ module DataMapper
           TAGS
         end
         
+        after :save, :tag_now_with_taglist
         before :destroy, :destroy_all_taggings
       end
       
@@ -62,6 +63,18 @@ module DataMapper
         def taggable_class;self.class;end
         def taggable;self;end
         
+        def taglist
+          @taglist || TagList.new(self.tags.collect{|t| t.name}).to_s
+        end
+        
+        def taglist=(ataglist)
+          # if the object is a new record, we will tag the object after save
+          # if the object isn't a new record, we tag the object now
+          @taglist = ataglist
+          tag_now_with_taglist unless new_record?
+          true
+        end
+        
         def can_tag_by?(tagger)
           if tagger.is_a?(Class)
             return self.class.tagger_classes.include?(tagger)
@@ -82,6 +95,15 @@ module DataMapper
         end
         
         protected
+        def tag_now_with_taglist
+          return unless @taglist 
+          # Destroy all the taggings
+          destroy_all_taggings unless self.new_record?
+
+          # Tag with the tag list
+          self.tag(:with => TagList.from(@taglist))
+          @taglist = nil   
+        end
 
         def destroy_all_taggings
           self.taggings.destroy!

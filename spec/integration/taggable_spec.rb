@@ -26,6 +26,40 @@ if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
       @article.tag(:by =>@user1, :with => ["tag1", "tag4", "tag5"])
     end
     
+    it "should be able to tag with taglist" do
+      picture = Picture.new
+      picture.taglist = "tag1, tag2, tag3"
+      picture.save.should == true
+      picture.tags.count.should == 3
+      picture.taglist.should == "tag1, tag2, tag3"
+      picture.destroy      
+    end
+    
+    it "should be able to tag with taglist with user scope" do
+      picture = Picture.new
+      user = User.create(:name => "me")
+      
+      Tag.as(user) do
+        picture.taglist = "tag1, tag2, tag3"
+        picture.save.should == true
+      end      
+      picture.tags.count.should == 3
+      Tag.by(user).on(picture).sort.should == [Tag.get("tag1"), Tag.get("tag2"), Tag.get("tag3")].sort
+      picture.destroy
+    end
+
+    it "should be able to update tags with taglist" do
+      picture = Picture.new
+      picture.taglist = "tag1, tag2, tag3"
+      picture.save
+      
+      picture.taglist = "tag1, tag3, tag4, tagme"  
+      picture.tags.count.should == 4
+      picture.taglist.should == "tag1, tag3, tag4, tagme"
+      
+      picture.destroy      
+    end
+    
     it "should setup to tagger_classes and taggable_classes accessors for taggables and taggers" do
       Picture.respond_to?(:tagger_classes).should be_true
       User.respond_to?(:taggable_classes).should be_true

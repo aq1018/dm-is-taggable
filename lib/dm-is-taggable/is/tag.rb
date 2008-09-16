@@ -68,7 +68,7 @@ module DataMapper
             counter_conditions = [
               "taggings.taggable_type = '#{taggable_class.to_s}'",
               "taggings.taggable_id = #{taggable_class.storage_name}.id",
-              "tags.id IN (#{tag_list.map{|t| (Tag.get(t) || Tag.create(:name => t)).id }.join(', ')})"
+              "tags.id IN (#{tag_list.map{|t| Tag.fetch(t).id }.join(', ')})"
               ]
             counter_conditions << "taggings.tagger_type = '#{tagger_class.to_s}'" if tagger_class
             counter_conditions << "taggings.tagger_id = #{tagger_obj.id}" if tagger_obj       
