@@ -1,0 +1,39 @@
+= dm-is-taggable
+
+
+== Using dm-is-taggable
+
+=== Define taggers
+
+@@@ruby
+class User
+  include DataMapper::Resource
+  property :id, Serial
+  property :name, String
+  is :tagger, :on => ["Article", "Picture"]
+end
+
+class Bot
+  include DataMapper::Resource
+  property :id, Serial
+  property :name, String
+  is :tagger, :on => ["Article", "Picture"]
+end
+@@@
+
+=== Add taggables
+
+@@@ruby
+class Article
+  include DataMapper::Resource
+  property :id, Serial
+  is :taggable, :by => ["User", "Bot"]
+end
+
+class Picture
+  include DataMapper::Resource
+  property :id, Serial
+  is :taggable, :by => ["User", "Bot"]
+end
+@@@
+
