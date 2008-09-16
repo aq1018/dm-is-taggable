@@ -1,3 +1,5 @@
+Please go to http://github.com/aq1018/dm-is-taggable/tree/master/README.textile for a pretty readme
+
 h1. dm-is-taggable
 
 dm-is-taggable is a tagging system built for datamapper. It has supports for multiple tagger types and taggable types.

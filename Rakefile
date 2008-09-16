@@ -15,9 +15,9 @@ GEM_DEPENDENCIES = [["dm-core", GEM_DEPENDENCY_VERSION], ["dm-aggregates", GEM_D
 GEM_CLEAN = ["log", "pkg"]
 GEM_EXTRAS = { :has_rdoc => false, :extra_rdoc_files => %w[ README.textile LICENSE TODO ] }
 
-PROJECT_NAME = "datamapper"
-PROJECT_URL  = "http://github.com/sam/dm-more/tree/master/dm-is-taggable"
-PROJECT_DESCRIPTION = PROJECT_SUMMARY = "Taggable of a DataMapper plugin"
+PROJECT_NAME = "dm-is-taggable"
+PROJECT_URL  = "http://github.com/aq1018/dm-is-taggable"
+PROJECT_DESCRIPTION = PROJECT_SUMMARY = "Tagging implementation for DataMapper"
 
 require 'tasks/hoe'
 
