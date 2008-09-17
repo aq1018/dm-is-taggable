@@ -55,9 +55,21 @@ module DataMapper
         def all_similar_by_tags
           # this magic query is basically looking at the taggings table,
           #  searching for taggings having a corresponding tagging from the current taggable object with the same tag_id
-          #  grouping by tagger_id and counting how many are they 
-          taggers = repository.adapter.query("SELECT count(*), tagger_id FROM (SELECT DISTINCT t1.tag_id, t1.tagger_id AS tagger_id FROM taggings AS t1 INNER JOIN taggings AS t2 ON ( t2.tag_id = t1.tag_id AND t2.tagger_type = '#{self.class.to_s}' AND t2.tagger_id = #{self.id}) WHERE t1.tagger_type = '#{self.class.to_s}' AND t1.tagger_id != #{self.id}) AS a GROUP BY tagger_id;")
-
+          #  grouping by tagger_id and counting how many are they
+          sql = "SELECT count(*), tagger_id 
+                 FROM (
+                   SELECT DISTINCT t1.tag_id, t1.tagger_id AS tagger_id 
+                   FROM taggings AS t1 
+                   INNER JOIN taggings AS t2 
+                   ON ( t2.tag_id = t1.tag_id AND t2.tagger_type = '#{self.class.to_s}' AND t2.tagger_id = #{self.id}) 
+                   WHERE t1.tagger_type = '#{self.class.to_s}' AND t1.tagger_id != #{self.id}
+                 )
+                 AS a 
+                 GROUP BY tagger_id;"
+        
+          
+          taggers = repository.adapter.query(sql)
+          
           # for each other taggers, we have the number of tags in common and the tagger object
           # we order the result by similarity descending
           taggers.collect{|tagger| [tagger[0], self.class.get(tagger[1])]}.sort {|x,y| y[0]<=>x[0]}

@@ -21,10 +21,10 @@ def load_driver(name, default_uri)
   end
 end
 
-ENV['ADAPTER'] ||= 'sqlite3'
+ENV['ADAPTER'] ||= 'mysql'
 
 HAS_SQLITE3  = load_driver(:sqlite3,  'sqlite3::memory:')
-HAS_MYSQL    = load_driver(:mysql,    'mysql://maxime@localhost/dm_is_taggable_test')
+HAS_MYSQL    = load_driver(:mysql,    'mysql://root@localhost/dm_is_taggable_test')
 HAS_POSTGRES = load_driver(:postgres, 'postgres://maxime@localhost/dm_is_taggable_test')
 
 require "dm-types"

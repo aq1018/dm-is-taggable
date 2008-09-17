@@ -78,17 +78,6 @@ module DataMapper
           taggable_class.all(query)
         end
         
-        # Returns an array of related tags.
-        # Related tags are all the other tags that are found  tagged with the provided tags.
-#        def related(options)
-#          tagger, taggable, tag_list, cleaned_options = extract_options(options)
-#          tagger_class, tagger_obj = extract_tagger_class_object(tagger)
-#          taggable_class, taggable_obj = extract_taggable_class_object(taggable)
-#
-#          # find all the taggables that are related ...
-#          find_taggables(options).all()
-#        end
-        
         def fetch(name)
           first(:name => name) || create(:name => name)
         end
@@ -114,7 +103,33 @@ module DataMapper
           self.name
         end
         
-
+       # Returns an array of related tags.
+       # Related tags are all the other tags that are found  tagged with the provided tags.
+        def related
+          sql = "SELECT count(*) AS count, tag_id
+                 FROM
+                  (SELECT DISTINCT t2.tag_id AS tag_id, t2.tagger_id, t2.tagger_type, t2.taggable_id, t2.taggable_type
+                  FROM taggings AS t1 
+                  INNER JOIN taggings AS t2 
+                  ON ( t2.taggable_id = t1.taggable_id AND t2.taggable_type = t1.taggable_type) 
+                  WHERE t1.tag_id = #{self.id} AND t2.tag_id != #{self.id})
+                 AS a
+                 GROUP BY tag_id 
+                 HAVING count(*) > 1
+                 ORDER BY count(*) DESC;"
+                 
+           # get a hash with tag_id => tag count
+           tags = repository.adapter.query(sql).inject({}){|h, t| h[t[1].to_i] = t[0].to_i; h}
+           
+           # get all the tag resources
+           tag_objects = Tag.all(:id => tags.keys)
+           
+           # turn it into an array like this [[count, tag], [count, tag] ...]
+           # sorted by count in descending order
+           tag_objects.collect do |t|
+             [tags[t.id], t]
+           end.sort{|a, b| a[0] <=> b[0]}.reverse
+         end
         
         def popular_by_tags
           sql= "SELECT tagger_type, tagger_id, COUNT( taggable_id ) AS counter

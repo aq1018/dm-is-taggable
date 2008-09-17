@@ -261,25 +261,29 @@ if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
        Tag.get("tag1").popular_by_tags.should == [@user1, @user2, @bot1] # should return array and calculate this based upon the usage of the tag
      end
          
-#     it "should be able to retrieve related tags that where used in the same set" do
-#     relate through what?? taggable? tagger?
-#       related_tags = Tag.get("tag3").related_tags
-#       related_tags.size.should == 2
-#       related_tags.include?(Tag.get("tag1")).should be_true
-#       related_tags.include?(Tag.get("tag2")).should be_true
-#       
-#       related_tags = Tag.get("tag1").related_tags
-#       related_tags.size.should == 4
-#       related_tags.include?(Tag.get("tag2")).should be_true
-#       related_tags.include?(Tag.get("tag3")).should be_true
-#       related_tags.include?(Tag.get("tag4")).should be_true
-#       related_tags.include?(Tag.get("tag5")).should be_true
-#     end
+    it "should be able to retrieve related tags that where used in the same set" do
+      related_tags = Tag.get("tag3").related
+      related_tags.size.should == 2
+      related_tags.include?([2,Tag.get("tag1")]).should be_true
+      related_tags.include?([2,Tag.get("tag2")]).should be_true
+      
+      related_tags = Tag.get("tag1").related
+      related_tags.size.should == 4
+      related_tags.include?([2,Tag.get("tag2")]).should be_true
+      related_tags.include?([3,Tag.get("tag3")]).should be_true
+      related_tags.include?([2,Tag.get("tag4")]).should be_true
+      related_tags.include?([2,Tag.get("tag5")]).should be_true
+    end
 
-    # it "should be able to retrieve the times that tags where used in the same set" do
-    #   pending
-    #   # Not sure what this means...
-    #   # Tag.get("tag3").related_tags.first.tagged_together_count = 1 # first would return tag1
-    # end
+    it "should be able to retrieve the times that tags where used in the same set" do
+      # tag1 and tag3 are tagged together 2 times by user1 and bot1
+      
+      # I think you just want to find the counts on related tags...
+      # So what I did was to include the number of counts on Tags#related
+      related_tags = Tag.get("tag3").related
+      related_tags.size.should == 2
+      related_tags.include?([2,Tag.get("tag1")]).should be_true
+      related_tags.include?([2,Tag.get("tag2")]).should be_true
+    end
   end
 end
