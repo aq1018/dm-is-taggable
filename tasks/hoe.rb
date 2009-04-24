@@ -37,3 +37,9 @@ hoe = Hoe.new(GEM_NAME, GEM_VERSION) do |p|
   end
 
 end
+
+task :gemspec do
+  open("dm-is-taggable.gemspec", "w") do |file|
+    file.write hoe.spec.to_ruby
+  end
+end
