@@ -285,5 +285,17 @@ if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
       related_tags.include?([2,Tag.get("tag1")]).should be_true
       related_tags.include?([2,Tag.get("tag2")]).should be_true
     end
+
+    it "should be able to total tags" do
+      total = Picture.total(:limit => 10)
+      total.should be_a(Array)
+      total.should_not be_empty
+      total.each do |item|
+        item.should be_a(Array)
+        item.size.should == 2
+        item[0].should be_a(Tag)
+        item[1].should be_a(Integer)
+      end
+    end
   end
 end

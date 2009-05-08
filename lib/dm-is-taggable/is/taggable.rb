@@ -55,6 +55,16 @@ module DataMapper
            options.merge!(:on => self, :by =>tagger, :with => tags)
           Tag.find_taggables(options)
         end
+
+        def total(options = {})
+          property = DataMapper::Property.new(Tagging, :"count(*)", Integer)
+          order = options[:order] || :desc
+          dir = DataMapper::Query::Direction.new(property, order)
+          tag_id_to_count = Tagging.aggregate(:all.count,
+            options.merge(:fields => [:tag_id], :order => [dir]))
+          tag_ids, counts = tag_id_to_count.transpose
+          Tag.all(:id => tag_ids).zip counts
+        end
       end # ClassMethods
 
       module TaggableInstanceMethods

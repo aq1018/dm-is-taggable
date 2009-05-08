@@ -21,7 +21,7 @@ def load_driver(name, default_uri)
   end
 end
 
-ENV['ADAPTER'] ||= 'mysql'
+ENV['ADAPTER'] ||= 'sqlite3'
 
 HAS_SQLITE3  = load_driver(:sqlite3,  'sqlite3::memory:')
 HAS_MYSQL    = load_driver(:mysql,    'mysql://root@localhost/dm_is_taggable_test')
