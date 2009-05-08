@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{dm-is-taggable}
-  s.version = "0.1.4"
+  s.version = "0.1.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Aaron Qian, Maxime Guilbot"]
-  s.date = %q{2009-05-08}
+  s.date = %q{2009-05-09}
   s.description = %q{Tagging implementation for DataMapper}
   s.email = ["team [a] ekohe [d] com"]
   s.extra_rdoc_files = ["README.textile", "LICENSE", "TODO"]
