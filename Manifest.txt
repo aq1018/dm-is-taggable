@@ -6,6 +6,7 @@ Rakefile
 TODO
 lib/dm-is-taggable.rb
 lib/dm-is-taggable/aggregate_patch.rb
+lib/dm-is-taggable/do_adapter_ext.rb
 lib/dm-is-taggable/tag.rb
 lib/dm-is-taggable/tagging.rb
 lib/dm-is-taggable/tag_list.rb
