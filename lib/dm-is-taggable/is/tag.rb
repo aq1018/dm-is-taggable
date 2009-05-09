@@ -55,12 +55,16 @@ module DataMapper
             return rv
           end
           
-          query = {  taggable_class.tags.tag.name => tag_list.to_a,
+          query = {
+            taggable_class.tags.tag.name => tag_list.to_a,
             Tagging.properties[:taggable_type] => taggable_class.to_s,
-            :unique => true
-           }
-           query.merge!(Tagging.properties[:tagger_type] => tagger_class) if tagger_class
-           query.merge!(Tagging.properties[:tagger_id] => tagger_obj.id) if tagger_obj          
+              :unique => true
+          }
+          query.merge!(Tagging.properties[:tagger_type] => tagger_class) if tagger_class
+          query.merge!(Tagging.properties[:tagger_id] => tagger_obj.id) if tagger_obj          
+          (options.keys - [:match]).each do |key|
+            query[key] = options[key]
+          end
           
           unless options[:match] == :any
             conditions = "SELECT COUNT(DISTINCT(tag_id)) FROM taggings INNER JOIN tags ON taggings.tag_id = tags.id WHERE "

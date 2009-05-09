@@ -1,7 +1,7 @@
 module DataMapper
   module Is
     module Taggable
-      VERSION = "0.1.5"
+      VERSION = "0.1.6"
       DEPENDENCY_VERSION = ">= 0.9.6"
     end
   end

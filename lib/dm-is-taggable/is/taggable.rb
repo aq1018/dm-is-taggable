@@ -51,8 +51,8 @@ module DataMapper
         def taggable_class;self;end
         
         def find(options)
-           tagger, taggable, tags, options = extract_options(options)
-           options.merge!(:on => self, :by =>tagger, :with => tags)
+          tagger, taggable, tags, options = extract_options(options)
+          options.merge!(:on => self, :by =>tagger, :with => tags)
           Tag.find_taggables(options)
         end
 

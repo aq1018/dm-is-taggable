@@ -297,5 +297,10 @@ if HAS_SQLITE3 || HAS_MYSQL || HAS_POSTGRES
         item[1].should be_a(Integer)
       end
     end
+
+    it "should be able to specify conditions over find method" do
+      result = Picture.find(:with => 'tag1', :id.not => [1])
+      result.map(&:id).should_not be_include(1)
+    end
   end
 end
